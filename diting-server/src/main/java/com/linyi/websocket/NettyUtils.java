@@ -8,7 +8,7 @@ import io.netty.util.AttributeKey;
  * @description netty工具类
  * @date 2024/1/8 19:58
  */
-public class NettyUtil {
+public class NettyUtils {
     public static AttributeKey<String> TOKEN = AttributeKey.valueOf("token");
     public static AttributeKey<String> IP = AttributeKey.valueOf("ip");
     /**
