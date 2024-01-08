@@ -73,7 +73,8 @@ public class NettyWebSocketServer {
                         pipeline.addLast(new ChunkedWriteHandler());
 //                        用于将一个Http的消息组装成一个完成的HttpRequest或者HttpResponse，那么具体的是什么取决于是请求还是响应，
                         pipeline.addLast(new HttpObjectAggregator(8192));
-//                        pipeline.addLast(new HttpHeadersHandler());
+//                        获取ip和token
+                        pipeline.addLast(new HttpHeadersHandler());
 //                        用于处理websocket, /ws为访问websocket时的uri
                         pipeline.addLast(new WebSocketServerProtocolHandler("/"));
                         pipeline.addLast(NETTY_WEB_SOCKET_SERVER_HANDLER);
