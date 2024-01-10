@@ -1,11 +1,17 @@
 package com.linyi.websocket;
 
+import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.json.JSONUtil;
+import com.linyi.user.domain.enums.WSReqTypeEnum;
+import com.linyi.user.domain.vo.request.WSBaseReq;
+import com.linyi.user.service.WebSocketService;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import jdk.management.resource.ResourceType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -14,7 +20,7 @@ import java.net.InetSocketAddress;
 @ChannelHandler.Sharable
 public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>{
 
-//    private WebSocketService webSocketService;
+    private WebSocketService webSocketService;
 
     /**
      * @param ctx:
@@ -57,9 +63,22 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
         ctx.channel().close();
     }
 
+    /**
+     * @param ctx:
+     * @return void
+     * @description 通道建立处理
+     * @date 2024/1/10 22:42
+     */
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         log.info(String.format("%s 通道连接", ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString()));
+        this.webSocketService = getService();
+//        建立通道后，将通道加入到通道管理器中
+        this.webSocketService.connect(ctx.channel());
+    }
+
+    private WebSocketService getService() {
+        return SpringUtil.getBean(WebSocketService.class);
     }
 
     @Override
@@ -69,6 +88,20 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
-
+//        解析ws帧
+        WSBaseReq wsBaseReq = JSONUtil.toBean(textWebSocketFrame.text(), WSBaseReq.class);
+//        获取请求类型
+        WSReqTypeEnum wsReqTypeEnum = WSReqTypeEnum.of(wsBaseReq.getType());
+        switch (wsReqTypeEnum) {
+            case LOGIN:
+                this.webSocketService.handleLoginReq(channelHandlerContext.channel());
+                break;
+            case HEARTBEAT:
+                break;
+            case AUTHORIZE:
+                break;
+            default:
+                break;
+        }
     }
 }

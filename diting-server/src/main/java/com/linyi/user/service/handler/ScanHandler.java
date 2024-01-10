@@ -18,14 +18,20 @@ public class ScanHandler extends AbstractHandler {
 //    @Autowired
 //    private WxMsgService wxMsgService;
 
+    /**
+     * @param wxMpXmlMessage:
+     * @param map:
+     * @param wxMpService:
+     * @param wxSessionManager:
+     * @return WxMpXmlOutMessage
+     * @description 扫码事件处理
+     * @date 2024/1/10 22:37
+     */
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map,
                                     WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
-        WxOAuth2UserInfo wxMpUser = wxMpService.getOAuth2Service().getUserInfo(wxMpOAuth2AccessToken, null);
-        // 扫码事件处理
-        return wxMsgService.scan(wxMpService, wxMpXmlMessage);
 
-
+        return null;
     }
 
 }

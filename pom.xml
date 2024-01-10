@@ -43,6 +43,7 @@
         <jsoup.version>1.15.3</jsoup.version>
         <okhttp.version>4.8.1</okhttp.version>
         <redisson-spring-boot-starter.version>3.17.1</redisson-spring-boot-starter.version>
+        <caffeine.version>3.1.</caffeine.version>
     </properties>
 
     <dependencyManagement>
@@ -100,6 +101,7 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector.version}</version>
             </dependency>
+
 <!--            &lt;!&ndash;JWT(Json Web Token)登录支持&ndash;&gt;-->
 <!--            <dependency>-->
 <!--                <groupId>io.jsonwebtoken</groupId>-->
