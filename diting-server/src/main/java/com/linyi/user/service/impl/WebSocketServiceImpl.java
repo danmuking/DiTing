@@ -4,8 +4,9 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.dto.WSChannelExtraDTO;
-import com.linyi.user.domain.vo.request.WSBaseReq;
+import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.vo.response.ws.WSBaseResp;
 import com.linyi.user.service.WebSocketService;
 import com.linyi.user.service.adapter.WSAdapter;
@@ -15,6 +16,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -40,14 +42,19 @@ public class WebSocketServiceImpl implements WebSocketService {
             .maximumSize(MAX_MUM_SIZE)
             .expireAfterWrite(EXPIRE_TIME)
             .build();
+
+    private static final ConcurrentHashMap<Channel, WSChannelExtraDTO> ONLINE_CHANNEL = new ConcurrentHashMap<>();
+
+    @Lazy
     @Autowired
     WxMpService wxMpService;
-    private static final ConcurrentHashMap<Channel, WSChannelExtraDTO> CHANNELS= new ConcurrentHashMap<>();
+    @Autowired
+    UserDao userDao;
 
     @Override
     public void connect(Channel channel) {
 //        现在DTO是空的，因为用户还没扫码，不能绑定用户信息
-        CHANNELS.put(channel,new WSChannelExtraDTO());
+        ONLINE_CHANNEL.put(channel,new WSChannelExtraDTO());
     }
 
     @Override
@@ -56,13 +63,43 @@ public class WebSocketServiceImpl implements WebSocketService {
         Integer code = generateCode(channel);
 //        向微信请求二维码
         WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(code, (int) EXPIRE_TIME.getSeconds());
+//        将code和channel绑定
+        WAIT_LOGIN_MAP.put(code,channel);
 //        向前端发送
         sendMsg(channel, WSAdapter.buildLoginResp(wxMpQrCodeTicket));
     }
 
     @Override
     public void userOffline(Channel channel) {
-        CHANNELS.remove(channel);
+        ONLINE_CHANNEL.remove(channel);
+    }
+
+    @Override
+    public void scanLoginSuccess(Integer code, Long id) {
+//        将用户和Channel绑定
+//        根据事件码获取channel
+        Channel channel = WAIT_LOGIN_MAP.getIfPresent(code);
+        if(channel == null){
+            return;
+        }
+        WSChannelExtraDTO wsChannelExtraDTO = ONLINE_CHANNEL.get(channel);
+        wsChannelExtraDTO.setUid(id);
+//        绑定后删除事件码
+        ONLINE_CHANNEL.put(channel,wsChannelExtraDTO);
+        WAIT_LOGIN_MAP.invalidate(code);
+
+        User user = userDao.getById(id);
+//        向前端返回通知
+        sendMsg(channel,WSAdapter.buildLoginSuccessResp(user));
+    }
+
+    @Override
+    public void sendAuthorizeMsg(int code) {
+        Channel channel = WAIT_LOGIN_MAP.getIfPresent(code);
+        if(channel == null){
+            return;
+        }
+        sendMsg(channel,WSAdapter.buildWaitAuthorizeResp());
     }
 
     private void sendMsg(Channel channel, WSBaseResp wsBaseResp) {

@@ -34,4 +34,8 @@ public interface WebSocketService {
      * @date 2024/1/11 19:16
      */
     void userOffline(Channel channel);
+
+    void scanLoginSuccess(Integer code, Long id);
+
+    void sendAuthorizeMsg(int code);
 }

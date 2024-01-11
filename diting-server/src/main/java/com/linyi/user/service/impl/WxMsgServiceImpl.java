@@ -1,8 +1,11 @@
 package com.linyi.user.service.impl;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.service.UserService;
+import com.linyi.user.service.WebSocketService;
 import com.linyi.user.service.WxMsgService;
 import com.linyi.user.service.adapter.TextBuilder;
 import com.linyi.user.service.adapter.UserAdapter;
@@ -16,18 +19,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Objects;
 
 @Service
 @Slf4j
 public class WxMsgServiceImpl implements WxMsgService {
+    private static final Cache<String,Integer> WAIT_LOGIN_MAP = Caffeine.newBuilder().maximumSize(10000L).expireAfterWrite(Duration.ofHours(1)).build();
     private static final String URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
     @Value("${wx.mp.callback}")
     private String callback;
     @Autowired
     UserService userService;
     @Autowired
+    WebSocketService webSocketService;
+    @Autowired
     UserDao userDao;
+
     @Override
     public WxMpXmlOutMessage scan(WxMpService wxMpService, WxMpXmlMessage wxMpXmlMessage) {
 //        获取open id
@@ -40,6 +48,8 @@ public class WxMsgServiceImpl implements WxMsgService {
         boolean authorized = registered && StringUtils.isNotEmpty(user.getAvatar());
 //        已注册且已授权，直接返回
         if(registered && authorized){
+//            登录成功事件,向前端返回登录成功通知
+            webSocketService.scanLoginSuccess(code, user.getId());
             return null;
         }
 //        未注册，先注册
@@ -47,18 +57,27 @@ public class WxMsgServiceImpl implements WxMsgService {
             user = User.builder().openId(openId).build();
             userService.register(user);
         }
-//        授权流程
+//        绑定事件码和openid
+        WAIT_LOGIN_MAP.put(openId,code);
+//        请求用户授权
+//        发送请求授权信息
+        webSocketService.sendAuthorizeMsg(code);
         String authorizeUrl = String.format(URL,wxMpService.getWxMpConfigStorage().getAppId(),callback + "/wx/portal/public/callBack");
         return new TextBuilder().build("请点击链接授权：<a href=\"" + authorizeUrl + "\">登录</a>", wxMpXmlMessage);
     }
 
     @Override
     public void authorize(WxOAuth2UserInfo userInfo) {
+        String openid = userInfo.getOpenid();
         User user = userDao.getByOpenId(userInfo.getOpenid());
 //        将用户昵称和头像存入数据库
         user = UserAdapter.buildAuthorizeUser(user.getId(), userInfo);
         userDao.updateById(user);
-
+        Integer code = WAIT_LOGIN_MAP.getIfPresent(openid);
+//        删除缓存
+        WAIT_LOGIN_MAP.invalidate(openid);
+//        授权完成，向前端发送通知
+        webSocketService.scanLoginSuccess(code, user.getId());
     }
 
     /**

@@ -1,8 +1,9 @@
 package com.linyi.user.service.adapter;
 
+import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.enums.WSRespTypeEnum;
-import com.linyi.user.domain.vo.request.WSBaseReq;
 import com.linyi.user.domain.vo.response.ws.WSBaseResp;
+import com.linyi.user.domain.vo.response.ws.WSLoginSuccess;
 import com.linyi.user.domain.vo.response.ws.WSLoginUrl;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
@@ -21,6 +22,23 @@ public class WSAdapter {
         WSBaseResp<WSLoginUrl> wsLoginUrlWSBaseResp = new WSBaseResp<>();
         wsLoginUrlWSBaseResp.setType(WSRespTypeEnum.LOGIN_URL.getType());
         wsLoginUrlWSBaseResp.setData(WSLoginUrl.builder().loginUrl(wxMpQrCodeTicket.getUrl()).build());
+        return wsLoginUrlWSBaseResp;
+    }
+
+    public static WSBaseResp buildLoginSuccessResp(User user) {
+        WSBaseResp<WSLoginSuccess> wsLoginUrlWSBaseResp = new WSBaseResp<>();
+        wsLoginUrlWSBaseResp.setType(WSRespTypeEnum.LOGIN_SUCCESS.getType());
+        wsLoginUrlWSBaseResp.setData(WSLoginSuccess.builder()
+                .uid(user.getId())
+                .avatar(user.getAvatar())
+                .name(user.getName())
+                .build());
+        return wsLoginUrlWSBaseResp;
+    }
+
+    public static WSBaseResp buildWaitAuthorizeResp() {
+        WSBaseResp<WSLoginUrl> wsLoginUrlWSBaseResp = new WSBaseResp<>();
+        wsLoginUrlWSBaseResp.setType(WSRespTypeEnum.LOGIN_SCAN_SUCCESS.getType());
         return wsLoginUrlWSBaseResp;
     }
 }

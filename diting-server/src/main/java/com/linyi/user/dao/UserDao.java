@@ -2,9 +2,9 @@ package com.linyi.user.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.mapper.UserMapper;
-import com.linyi.user.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @since 2024-01-09
  */
 @Service
-public class UserDao extends ServiceImpl<UserMapper, User> implements IUserService {
+public class UserDao extends ServiceImpl<UserMapper, User> implements IService<User> {
     /**
      * @param openId:
      * @return User
