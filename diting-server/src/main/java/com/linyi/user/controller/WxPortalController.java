@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @AllArgsConstructor
 @RestController
-@RequestMapping("wx/portal/public")
+@RequestMapping("/wx/portal/public")
 public class WxPortalController {
 
     private final WxMpService wxService;

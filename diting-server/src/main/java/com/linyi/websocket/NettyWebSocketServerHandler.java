@@ -11,7 +11,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import jdk.management.resource.ResourceType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;

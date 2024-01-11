@@ -66,7 +66,8 @@ public class NettyWebSocketServer {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
 //                        30秒客户端没有向服务器发送心跳则关闭连接
-                        pipeline.addLast(new IdleStateHandler(30, 0, 0));
+//                        TODO:测试环境关闭
+//                        pipeline.addLast(new IdleStateHandler(30, 0, 0));
 //                        用于解析客户端发送的请求
                         pipeline.addLast(new HttpServerCodec());
 //                        用于将多个消息转换为单一的request或者response对象

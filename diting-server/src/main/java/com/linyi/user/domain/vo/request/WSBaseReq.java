@@ -8,6 +8,11 @@ import lombok.Data;
  */
 @Data
 public class WSBaseReq {
+    /**
+     * @description ws从前端接收的消息
+     * @see com.linyi.user.domain.enums.WSReqTypeEnum
+     * @date 2024/1/11 18:19
+     */
     private Integer type;
 
     /**
