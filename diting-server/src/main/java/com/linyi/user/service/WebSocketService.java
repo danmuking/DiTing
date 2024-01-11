@@ -26,4 +26,12 @@ public interface WebSocketService {
      * @date 2024/1/10 23:46
      */
     void handleLoginReq(Channel channel) throws WxErrorException;
+
+    /**
+     * @param channel:
+     * @return void
+     * @description 用户下线
+     * @date 2024/1/11 19:16
+     */
+    void userOffline(Channel channel);
 }

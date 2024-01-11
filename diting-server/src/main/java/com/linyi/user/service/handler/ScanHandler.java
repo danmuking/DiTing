@@ -1,5 +1,6 @@
 package com.linyi.user.service.handler;
 
+import com.linyi.user.service.WxMsgService;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -15,8 +16,8 @@ import java.util.Map;
 public class ScanHandler extends AbstractHandler {
 
 
-//    @Autowired
-//    private WxMsgService wxMsgService;
+    @Autowired
+    private WxMsgService wxMsgService;
 
     /**
      * @param wxMpXmlMessage:
@@ -30,8 +31,8 @@ public class ScanHandler extends AbstractHandler {
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map,
                                     WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
-
-        return null;
+        WxMpXmlOutMessage scan = wxMsgService.scan(wxMpService, wxMpXmlMessage);
+        return scan;
     }
 
 }

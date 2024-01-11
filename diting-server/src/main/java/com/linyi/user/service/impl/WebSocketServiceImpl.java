@@ -60,6 +60,11 @@ public class WebSocketServiceImpl implements WebSocketService {
         sendMsg(channel, WSAdapter.buildLoginResp(wxMpQrCodeTicket));
     }
 
+    @Override
+    public void userOffline(Channel channel) {
+        CHANNELS.remove(channel);
+    }
+
     private void sendMsg(Channel channel, WSBaseResp wsBaseResp) {
         channel.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(wsBaseResp)));
     }
