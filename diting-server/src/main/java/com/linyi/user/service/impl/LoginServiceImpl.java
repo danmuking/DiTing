@@ -28,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
         }
 //        获取redis中的token
         String key = RedisKey.getKey(RedisKey.USER_TOKEN_STRING, uid);
-        String realToken = RedisUtils.get(key);
+        String realToken = RedisUtils.getStr(key);
 //        判断token和当前token是否一致
         return Objects.equals(token, realToken);
     }
@@ -58,7 +58,7 @@ public class LoginServiceImpl implements LoginService {
     public String login(Long uid) {
         String key = RedisKey.getKey(RedisKey.USER_TOKEN_STRING, uid);
 //        如果用户已登录，直接从redis返回token
-        String token = RedisUtils.get(key);
+        String token = RedisUtils.getStr(key);
         if(StringUtils.isNotBlank(token)){
             return token;
         }

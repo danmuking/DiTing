@@ -2,15 +2,20 @@ package com.linyi.websocket;
 
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
+import com.linyi.common.utils.JwtUtils;
 import com.linyi.user.domain.enums.WSReqTypeEnum;
+import com.linyi.user.domain.vo.request.WSAuthorize;
 import com.linyi.user.domain.vo.request.WSBaseReq;
 import com.linyi.user.service.WebSocketService;
+import com.mysql.cj.util.StringUtils;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -53,6 +58,17 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
             if (idleStateEvent.state() == IdleState.READER_IDLE) {
                 log.info(String.format("%s 通道读空闲,关闭通道", ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString()));
                 webSocketService.userOffline(ctx.channel());
+            }
+        }
+//        处理握手完毕事件
+        if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
+            log.info(String.format("%s 通道握手成功", ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString()));
+//            取出token
+            String token = ctx.channel().attr(NettyUtils.TOKEN).get();
+//            如果token不为空就不需要再次登录
+            if (StringUtil.isNotBlank(token)) {
+//                关联通道和用户
+                webSocketService.authorize(ctx.channel(), new WSAuthorize(token));
             }
         }
         super.userEventTriggered(ctx, evt);
@@ -98,8 +114,6 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
                 this.webSocketService.handleLoginReq(channelHandlerContext.channel());
                 break;
             case HEARTBEAT:
-                break;
-            case AUTHORIZE:
                 break;
             default:
                 break;

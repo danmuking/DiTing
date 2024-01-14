@@ -25,9 +25,9 @@ public class HttpHeadersHandler extends ChannelInboundHandlerAdapter {
 //            获取token参数
             String token = Optional.ofNullable(urlBuilder.getQuery()).map(k -> k.get("token")).map(CharSequence::toString).orElse("");
             NettyUtils.setAttr(ctx.channel(), NettyUtils.TOKEN,token);
-
-//            获取请求路径
+//            移除ws参数
             fullHttpRequest.setUri(urlBuilder.getPath().toString());
+
             HttpHeaders headers = fullHttpRequest.headers();
             String ip = headers.get("X-Real-IP");
             if (StringUtils.isEmpty(ip)) {//如果没经过nginx，就直接获取远端地址

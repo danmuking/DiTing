@@ -1,6 +1,7 @@
 package com.linyi.user.service;
 
 
+import com.linyi.user.domain.vo.request.WSAuthorize;
 import io.netty.channel.Channel;
 import me.chanjar.weixin.common.error.WxErrorException;
 
@@ -38,4 +39,13 @@ public interface WebSocketService {
     void scanLoginSuccess(Integer code, Long id);
 
     void sendAuthorizeMsg(int code);
+
+    /**
+     * @param channel: ws通道
+     * @param wsAuthorize: 用户token
+     * @return void
+     * @description 主动认证登录
+     * @date 2024/1/14 22:45
+     */
+    void authorize(Channel channel, WSAuthorize wsAuthorize);
 }

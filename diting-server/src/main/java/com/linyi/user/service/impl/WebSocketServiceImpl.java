@@ -4,9 +4,11 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.linyi.common.utils.JwtUtils;
 import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.dto.WSChannelExtraDTO;
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.vo.request.WSAuthorize;
 import com.linyi.user.domain.vo.response.ws.WSBaseResp;
 import com.linyi.user.service.LoginService;
 import com.linyi.user.service.WebSocketService;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -54,6 +57,9 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @Override
     public void connect(Channel channel) {
@@ -105,6 +111,20 @@ public class WebSocketServiceImpl implements WebSocketService {
             return;
         }
         sendMsg(channel,WSAdapter.buildWaitAuthorizeResp());
+    }
+
+    @Override
+    public void authorize(Channel channel, WSAuthorize wsAuthorize) {
+        String token = wsAuthorize.getToken();
+//        判断token是否有效
+        boolean verify = loginService.verify(token);
+        Long uidOrNull = jwtUtils.getUidOrNull(token);
+//        如果token有效，就将用户和channel绑定
+        if(verify&&Objects.nonNull(uidOrNull)){
+            WSChannelExtraDTO wsChannelExtraDTO = ONLINE_CHANNEL.get(channel);
+            wsChannelExtraDTO.setUid(uidOrNull);
+            ONLINE_CHANNEL.put(channel,wsChannelExtraDTO);
+        }
     }
 
     private void sendMsg(Channel channel, WSBaseResp wsBaseResp) {
