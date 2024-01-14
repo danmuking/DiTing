@@ -2,11 +2,15 @@ package com.linyi;
 
 import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.service.LoginService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.junit4.SpringRunner;
+import sun.reflect.generics.tree.VoidDescriptor;
 
 /**
  * @package: com.linyi
@@ -19,9 +23,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@EnableAsync
 public class DaoTest {
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    LoginService loginService;
 
     @Test
     public void test(){
@@ -33,5 +41,12 @@ public class DaoTest {
         user = userDao.getById(1);
         System.out.println(user);
         userDao.removeById(1);
+    }
+
+    @Test
+    public void testAsync() throws InterruptedException {
+        loginService.test();
+        System.out.println("testAsync");
+        Thread.sleep(2000);
     }
 }

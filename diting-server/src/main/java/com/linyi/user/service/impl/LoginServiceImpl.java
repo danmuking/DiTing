@@ -6,6 +6,7 @@ import com.linyi.constant.RedisKey;
 import com.linyi.user.service.LoginService;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -32,6 +33,7 @@ public class LoginServiceImpl implements LoginService {
         return Objects.equals(token, realToken);
     }
 
+    @Async
     @Override
     public void renewalTokenIfNecessary(String token) {
 //        判断token是否有效
@@ -72,4 +74,5 @@ public class LoginServiceImpl implements LoginService {
 //        返回uid
         return verify(token) ? jwtUtils.getUidOrNull(token) : null;
     }
+
 }
