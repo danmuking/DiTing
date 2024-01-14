@@ -29,22 +29,22 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
-#  redis:
-#    # Redis服务器地址
-#    host: ${mallchat.redis.host}
-#    # Redis服务器端口号
-#    port: ${mallchat.redis.port}
-#    # 使用的数据库索引，默认是0
-#    database: 0
-#    # 连接超时时间
-#    timeout: 1800000
-#    # 设置密码
-#    password: ${mallchat.redis.password}
-#  jackson:
-#    serialization:
-#      write-dates-as-timestamps: true
-#jwt:
-#  secret: ${mallchat.jwt.secret}
+  redis:
+    # Redis服务器地址
+    host: ${mallchat.redis.host}
+    # Redis服务器端口号
+    port: ${mallchat.redis.port}
+    # 使用的数据库索引，默认是0
+    database: 0
+    # 连接超时时间
+    timeout: 1800000
+    # 设置密码
+    password: ${mallchat.redis.password}
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+jwt:
+  secret: ${mallchat.jwt.secret}
 wx:
   mp:
     #    callback: http://f4cd-113-92-129-127.ngrok.io

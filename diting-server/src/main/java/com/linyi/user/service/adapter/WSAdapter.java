@@ -25,13 +25,14 @@ public class WSAdapter {
         return wsLoginUrlWSBaseResp;
     }
 
-    public static WSBaseResp buildLoginSuccessResp(User user) {
+    public static WSBaseResp buildLoginSuccessResp(User user,String token) {
         WSBaseResp<WSLoginSuccess> wsLoginUrlWSBaseResp = new WSBaseResp<>();
         wsLoginUrlWSBaseResp.setType(WSRespTypeEnum.LOGIN_SUCCESS.getType());
         wsLoginUrlWSBaseResp.setData(WSLoginSuccess.builder()
                 .uid(user.getId())
                 .avatar(user.getAvatar())
                 .name(user.getName())
+                .token(token)
                 .build());
         return wsLoginUrlWSBaseResp;
     }

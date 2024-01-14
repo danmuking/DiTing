@@ -8,6 +8,7 @@ import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.dto.WSChannelExtraDTO;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.vo.response.ws.WSBaseResp;
+import com.linyi.user.service.LoginService;
 import com.linyi.user.service.WebSocketService;
 import com.linyi.user.service.adapter.WSAdapter;
 import io.netty.channel.Channel;
@@ -51,6 +52,9 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Autowired
     UserDao userDao;
 
+    @Autowired
+    private LoginService loginService;
+
     @Override
     public void connect(Channel channel) {
 //        现在DTO是空的，因为用户还没扫码，不能绑定用户信息
@@ -75,7 +79,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     }
 
     @Override
-    public void scanLoginSuccess(Integer code, Long id) {
+    public void scanLoginSuccess(Integer code, Long uid) {
 //        将用户和Channel绑定
 //        根据事件码获取channel
         Channel channel = WAIT_LOGIN_MAP.getIfPresent(code);
@@ -83,14 +87,15 @@ public class WebSocketServiceImpl implements WebSocketService {
             return;
         }
         WSChannelExtraDTO wsChannelExtraDTO = ONLINE_CHANNEL.get(channel);
-        wsChannelExtraDTO.setUid(id);
+        wsChannelExtraDTO.setUid(uid);
 //        绑定后删除事件码
         ONLINE_CHANNEL.put(channel,wsChannelExtraDTO);
         WAIT_LOGIN_MAP.invalidate(code);
 
-        User user = userDao.getById(id);
+        User user = userDao.getById(uid);
+        String token = loginService.login(uid);
 //        向前端返回通知
-        sendMsg(channel,WSAdapter.buildLoginSuccessResp(user));
+        sendMsg(channel,WSAdapter.buildLoginSuccessResp(user,token));
     }
 
     @Override
