@@ -45,7 +45,6 @@ public class DaoTest {
 
     @Test
     public void testAsync() throws InterruptedException {
-        loginService.test();
         System.out.println("testAsync");
         Thread.sleep(2000);
     }
