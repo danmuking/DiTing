@@ -1,8 +1,8 @@
 package com.linyi.user.service.impl;
 
+import com.linyi.common.constant.RedisKey;
 import com.linyi.common.utils.JwtUtils;
 import com.linyi.common.utils.RedisUtils;
-import com.linyi.constant.RedisKey;
 import com.linyi.user.service.LoginService;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

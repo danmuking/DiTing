@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @since 2024-01-09
  */
 @Service
-public class UserDao extends ServiceImpl<UserMapper, User> implements IService<User> {
+public class UserDao extends ServiceImpl<UserMapper, User> {
     /**
      * @param openId:
      * @return User
@@ -27,5 +27,15 @@ public class UserDao extends ServiceImpl<UserMapper, User> implements IService<U
     public User getByOpenId(String openId){
         LambdaQueryWrapper<User> eq = new QueryWrapper<User>().lambda().eq(User::getOpenId, openId);
         return getOne(eq);
+    }
+
+    /**
+     * @param uid:
+     * @return User
+     * @description 根据uid查询用户
+     * @date 2024/1/16 20:04
+     */
+    public User getByUid(Long uid){
+        return getById(uid);
     }
 }
