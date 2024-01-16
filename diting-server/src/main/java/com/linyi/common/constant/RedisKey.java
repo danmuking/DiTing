@@ -1,4 +1,4 @@
-package com.linyi.constant;
+package com.linyi.common.constant;
 
 public class RedisKey {
 

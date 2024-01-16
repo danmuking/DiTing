@@ -1,4 +1,4 @@
-package com.linyi.interceptor;
+package com.linyi.common.interceptor;
 
 import com.linyi.common.exception.HttpErrorEnum;
 import com.linyi.user.service.LoginService;

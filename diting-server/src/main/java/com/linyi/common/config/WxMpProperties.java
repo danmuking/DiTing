@@ -1,4 +1,4 @@
-package com.linyi.config;
+package com.linyi.common.config;
 
 import cn.hutool.json.JSONUtil;
 import lombok.Data;

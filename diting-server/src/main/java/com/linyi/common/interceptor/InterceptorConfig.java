@@ -1,4 +1,4 @@
-package com.linyi.interceptor;
+package com.linyi.common.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

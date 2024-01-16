@@ -1,4 +1,4 @@
-package com.linyi.config;
+package com.linyi.common.config;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;

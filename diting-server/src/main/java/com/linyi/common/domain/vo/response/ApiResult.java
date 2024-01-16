@@ -1,5 +1,6 @@
 package com.linyi.common.domain.vo.response;
 
+
 import com.linyi.common.exception.ErrorEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

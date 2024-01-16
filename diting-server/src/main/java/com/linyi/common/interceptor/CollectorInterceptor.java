@@ -1,4 +1,4 @@
-package com.linyi.interceptor;
+package com.linyi.common.interceptor;
 
 import com.linyi.common.domain.dto.RequestInfo;
 import com.linyi.common.utils.RequestHolder;
