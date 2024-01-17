@@ -1,6 +1,7 @@
 package com.linyi.user.service;
 
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.vo.request.ModifyNameReq;
 import com.linyi.user.domain.vo.request.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
@@ -24,7 +25,29 @@ public interface UserService {
      */
     UserInfoResp getUserInfo(Long uid);
 
+    /**
+     * @param uid:
+     * @return List<BadgeResp>
+     * @description 获取用户徽章信息
+     * @date 2024/1/17 17:06
+     */
     List<BadgeResp> badges(Long uid);
 
+    /**
+     * @param uid:
+     * @param req:
+     * @return void
+     * @description 佩戴徽章
+     * @date 2024/1/17 17:07
+     */
     void wearingBadge(Long uid, WearingBadgeReq req);
+
+    /**
+     * @param uid:
+     * @param req:
+     * @return void
+     * @description 修改用户名
+     * @date 2024/1/17 17:07
+     */
+    void modifyName(Long uid, ModifyNameReq req);
 }

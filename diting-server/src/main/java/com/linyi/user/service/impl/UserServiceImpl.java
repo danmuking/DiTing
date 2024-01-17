@@ -9,6 +9,7 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.entity.UserBackpack;
 import com.linyi.user.domain.enums.ItemEnum;
 import com.linyi.user.domain.enums.ItemTypeEnum;
+import com.linyi.user.domain.vo.request.ModifyNameReq;
 import com.linyi.user.domain.vo.request.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
@@ -17,6 +18,7 @@ import com.linyi.user.service.adapter.BadgeRespAdapter;
 import com.linyi.user.service.adapter.UserAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -73,6 +75,23 @@ public class UserServiceImpl implements UserService {
 //        用户没有佩戴该徽章，更新用户佩戴徽章
         if(!Objects.equals(byUid.getItemId(),req.getBadgeId())){
             userDao.wearingBadge(byUid.getId(),req.getBadgeId());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void modifyName(Long uid, ModifyNameReq req) {
+//        判断改名卡够不够
+        UserBackpack firstValidItem = userBackpackDao.getFirstValidItem(uid, ItemEnum.MODIFY_NAME_CARD.getId());
+        AssertUtil.isNotEmpty(firstValidItem,"改名次数不够了，等后续活动送改名卡哦");
+//        检查名字是否重复
+        User byName = userDao.getByName(req.getName());
+        AssertUtil.isEmpty(byName,"名字已经被抢占了，请换一个哦~~");
+//        使用改名卡
+        boolean useSuccess = userBackpackDao.invalidItem(firstValidItem.getId());
+//        使用成功，修改名字
+        if(useSuccess) {
+            userDao.modifyName(uid, req.getName());
         }
     }
 }

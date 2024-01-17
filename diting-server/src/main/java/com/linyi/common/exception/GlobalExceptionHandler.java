@@ -40,4 +40,13 @@ public class GlobalExceptionHandler {
         log.error("system exception！The reason is：{}", e.getMessage(), e);
         return ApiResult.fail(CommonErrorEnum.SYSTEM_ERROR);
     }
+
+    /**
+     * 自定义校验异常（如参数校验等）
+     */
+    @ExceptionHandler(value = BusinessException.class)
+    public ApiResult businessExceptionHandler(BusinessException e) {
+        log.info("business exception！The reason is：{}", e.getMessage(), e);
+        return ApiResult.fail(e.getErrorCode(), e.getMessage());
+    }
 }

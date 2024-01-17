@@ -3,6 +3,7 @@ package com.linyi.user.controller;
 
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.utils.RequestHolder;
+import com.linyi.user.domain.vo.request.ModifyNameReq;
 import com.linyi.user.domain.vo.request.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
@@ -46,6 +47,13 @@ public class UserController {
     @ApiOperation("佩戴徽章")
     public ApiResult<Void> wearingBadge(@Valid @RequestBody WearingBadgeReq req) {
         userService.wearingBadge(RequestHolder.get().getUid(), req);
+        return ApiResult.success();
+    }
+
+    @PutMapping("/name")
+    @ApiOperation("修改用户名")
+    public ApiResult<Void> modifyName(@Valid @RequestBody ModifyNameReq req) {
+        userService.modifyName(RequestHolder.get().getUid(), req);
         return ApiResult.success();
     }
 }
