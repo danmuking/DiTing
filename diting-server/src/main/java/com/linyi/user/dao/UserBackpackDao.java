@@ -7,6 +7,8 @@ import com.linyi.user.service.IUserBackpackService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户背包表 服务实现类
@@ -25,5 +27,13 @@ public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpac
 //                状态为未使用
                 .eq(UserBackpack::getStatus, YesOrNoEnum.NO.getStatus())
                 .count();
+    }
+
+    public List<UserBackpack> getByItemIds(Long uid, List<Long> ids) {
+        List<UserBackpack> list = lambdaQuery().eq(UserBackpack::getUid, uid)
+                .in(UserBackpack::getItemId, ids)
+                .eq(UserBackpack::getStatus, YesOrNoEnum.NO.getStatus())
+                .list();
+        return list;
     }
 }

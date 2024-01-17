@@ -48,4 +48,9 @@ public class DaoTest {
         System.out.println("testAsync");
         Thread.sleep(2000);
     }
+    @Test
+    public void generateToken(){
+        String login = loginService.login(11007L);
+        System.out.println(login);
+    }
 }
