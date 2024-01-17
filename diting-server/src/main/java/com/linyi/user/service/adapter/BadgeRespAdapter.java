@@ -35,11 +35,11 @@ public class BadgeRespAdapter {
         }
         badgeResps.sort((o1, o2) -> {
 //            拥有的徽章排在前面
-            if(o1.getObtain().equals(o2.getObtain())){
-                return o1.getObtain()-o2.getObtain();
+            if(o1.getWearing().equals(o2.getWearing())){
+                return o2.getObtain()-o1.getObtain();
             }
 //            佩戴的徽章排在前面
-            return o1.getWearing()-o2.getWearing();
+            return o2.getWearing()-o1.getWearing();
         });
         return badgeResps;
     }

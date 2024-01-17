@@ -2,11 +2,12 @@ package com.linyi.user.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.mapper.UserMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -37,5 +38,12 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
      */
     public User getByUid(Long uid){
         return getById(uid);
+    }
+
+    public void wearingBadge(Long uid, @NotNull Long badgeId) {
+        User update = new User();
+        update.setId(uid);
+        update.setItemId(badgeId);
+        updateById(update);
     }
 }

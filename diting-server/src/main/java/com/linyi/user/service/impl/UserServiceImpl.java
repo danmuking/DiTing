@@ -1,5 +1,6 @@
 package com.linyi.user.service.impl;
 
+import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.ItemConfigDao;
 import com.linyi.user.dao.UserBackpackDao;
 import com.linyi.user.dao.UserDao;
@@ -8,6 +9,7 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.entity.UserBackpack;
 import com.linyi.user.domain.enums.ItemEnum;
 import com.linyi.user.domain.enums.ItemTypeEnum;
+import com.linyi.user.domain.vo.request.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
 import com.linyi.user.service.UserService;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,5 +56,23 @@ public class UserServiceImpl implements UserService {
 //        构建返回对象
         return BadgeRespAdapter.bulidBadgeResp(badges,userBadges,byUid);
 
+    }
+
+    @Override
+    public void wearingBadge(Long uid, WearingBadgeReq req) {
+//        查询用户是否拥有该徽章
+        UserBackpack userBackpack = userBackpackDao.getByItemId(uid, req.getBadgeId());
+//        用户没有此徽章，抛出异常
+        AssertUtil.isNotEmpty(userBackpack,"用户没有此徽章");
+//        判断物品是否是徽章
+        ItemConfig itemConfig = itemConfigDao.getById(req.getBadgeId());
+//        不是徽章，抛出异常
+        AssertUtil.isTrue(Objects.equals(itemConfig.getType(), ItemTypeEnum.BADGE.getType()),"物品不是徽章");
+//        查询用户是否佩戴该徽章
+        User byUid = userDao.getByUid(uid);
+//        用户没有佩戴该徽章，更新用户佩戴徽章
+        if(!Objects.equals(byUid.getItemId(),req.getBadgeId())){
+            userDao.wearingBadge(byUid.getId(),req.getBadgeId());
+        }
     }
 }

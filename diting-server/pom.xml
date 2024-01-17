@@ -114,6 +114,10 @@
             <!--使用Swagger2-->
             <artifactId>knife4j-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
 
     </dependencies>
 

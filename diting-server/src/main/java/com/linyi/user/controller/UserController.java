@@ -3,17 +3,17 @@ package com.linyi.user.controller;
 
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.utils.RequestHolder;
+import com.linyi.user.domain.vo.request.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
 import com.linyi.user.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -40,6 +40,13 @@ public class UserController {
     @ApiOperation("可选徽章预览")
     public ApiResult<List<BadgeResp>> badges() {
         return ApiResult.success(userService.badges(RequestHolder.get().getUid()));
+    }
+
+    @PutMapping("/badge")
+    @ApiOperation("佩戴徽章")
+    public ApiResult<Void> wearingBadge(@Valid @RequestBody WearingBadgeReq req) {
+        userService.wearingBadge(RequestHolder.get().getUid(), req);
+        return ApiResult.success();
     }
 }
 

@@ -1,6 +1,7 @@
 package com.linyi.user.service;
 
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.vo.request.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
 
@@ -24,4 +25,6 @@ public interface UserService {
     UserInfoResp getUserInfo(Long uid);
 
     List<BadgeResp> badges(Long uid);
+
+    void wearingBadge(Long uid, WearingBadgeReq req);
 }

@@ -36,4 +36,12 @@ public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpac
                 .list();
         return list;
     }
+
+    public UserBackpack getByItemId(Long uid, Long itemId) {
+        return lambdaQuery().eq(UserBackpack::getUid, uid)
+                .eq(UserBackpack::getItemId, itemId)
+                .eq(UserBackpack::getStatus, YesOrNoEnum.NO.getStatus())
+                .last("limit 1")
+                .one();
+    }
 }
