@@ -1,5 +1,6 @@
 package com.linyi.user.dao;
 
+import com.linyi.common.domain.enums.IdempotentEnum;
 import com.linyi.common.domain.enums.YesOrNoEnum;
 import com.linyi.user.domain.entity.UserBackpack;
 import com.linyi.user.mapper.UserBackpackMapper;
@@ -18,7 +19,7 @@ import java.util.List;
  * @since 2024-01-16
  */
 @Service
-public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpack> implements IUserBackpackService {
+public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpack> {
 
     public Integer getCountByValidItemId(Long uid, Long id) {
         return lambdaQuery()
@@ -59,5 +60,11 @@ public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpac
         update.setId(id);
         update.setStatus(YesOrNoEnum.YES.getStatus());
         return updateById(update);
+    }
+
+    public UserBackpack getByIdp(String idempotent) {
+        return lambdaQuery()
+                .eq(UserBackpack::getIdempotent, idempotent)
+                .one();
     }
 }

@@ -1,5 +1,6 @@
 package com.linyi.user.service.impl;
 
+import com.linyi.common.event.UserRegisterEvent;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.ItemConfigDao;
 import com.linyi.user.dao.UserBackpackDao;
@@ -17,6 +18,7 @@ import com.linyi.user.service.UserService;
 import com.linyi.user.service.adapter.BadgeRespAdapter;
 import com.linyi.user.service.adapter.UserAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,9 +34,12 @@ public class UserServiceImpl implements UserService {
     UserBackpackDao userBackpackDao;
     @Autowired
     ItemConfigDao itemConfigDao;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
     @Override
     public void register(User user) {
         userDao.save(user);
+        applicationEventPublisher.publishEvent(new UserRegisterEvent(this, user));
     }
 
     @Override
