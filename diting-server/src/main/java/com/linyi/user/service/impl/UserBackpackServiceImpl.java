@@ -44,7 +44,7 @@ public class UserBackpackServiceImpl implements IUserBackpackService {
     }
 
     @RedissonLock(key = "#idempotent", waitTime = 5000)
-    private void doAcquireItem(Long uid, Long itemId, String idempotent) {
+    public void doAcquireItem(Long uid, Long itemId, String idempotent) {
 //        检查幂等号是否已经存在
         UserBackpack userBackpack = userBackpackDao.getByIdp(idempotent);
 //        已存在，直接返回
