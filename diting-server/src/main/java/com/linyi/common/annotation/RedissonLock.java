@@ -14,8 +14,10 @@ import java.util.concurrent.TimeUnit;
  * @date: 2024/1/17 22:25
  * @version: 1.0
  */
-@Retention(RetentionPolicy.RUNTIME)//运行时生效
-@Target(ElementType.METHOD)//作用在方法上
+// 将注解保留到运行时
+@Retention(RetentionPolicy.RUNTIME)
+// 注解作用在方法上
+@Target(ElementType.METHOD)
 public @interface RedissonLock {
     /**
      * key的前缀,默认取方法全限定名，除非我们在不同方法上对同一个资源做分布式锁，就自己指定

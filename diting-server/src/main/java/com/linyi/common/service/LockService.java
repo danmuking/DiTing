@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+/**
+ * @description 分布式锁服务类
+ * @date 2024/1/18 16:34
+ */
 @Service
 @Slf4j
 public class LockService {
@@ -20,6 +24,7 @@ public class LockService {
     private RedissonClient redissonClient;
 
     public <T> T executeWithLockThrows(String key, int waitTime, TimeUnit unit, SupplierThrow<T> supplier) throws Throwable {
+//        获取锁
         RLock lock = redissonClient.getLock(key);
         boolean lockSuccess = lock.tryLock(waitTime, unit);
         if (!lockSuccess) {

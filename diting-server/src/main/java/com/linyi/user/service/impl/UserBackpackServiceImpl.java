@@ -14,6 +14,7 @@ import com.linyi.user.service.IUserBackpackService;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -33,18 +34,20 @@ public class UserBackpackServiceImpl implements IUserBackpackService {
     private UserBackpackDao userBackpackDao;
     @Autowired
     private ItemConfigDao itemConfigDao;
+    @Autowired
+    private UserBackpackServiceImpl userBackpackService;
 
     @Override
     public void acquireItem(Long uid, Long itemId, IdempotentEnum idempotentEnum, String businessId) {
 //        组装幂等号
         String idempotent = getIdempotent(itemId, idempotentEnum, businessId);
-//        发放物品
-        ((UserBackpackServiceImpl) AopContext.currentProxy()).doAcquireItem(uid, itemId, idempotent);
-//        doAcquireItem(uid, itemId, idempotent);
+//        发放物品,防止类内调用注解失效
+        userBackpackService.doAcquireItem(uid, itemId, idempotent);
     }
 
+    @Async
     @RedissonLock(key = "#idempotent", waitTime = 5000)
-    private void doAcquireItem(Long uid, Long itemId, String idempotent) {
+    public void doAcquireItem(Long uid, Long itemId, String idempotent) {
 //        检查幂等号是否已经存在
         UserBackpack userBackpack = userBackpackDao.getByIdp(idempotent);
 //        已存在，直接返回

@@ -35,9 +35,12 @@ public class RedissonLockAspect {
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable{
 //        通过反射获取方法
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+//        获取方法上的注解
         RedissonLock redissonLock = method.getAnnotation(RedissonLock.class);
         //默认方法限定名+注解排名（可能多个）
+//        是否指定了前缀，如果没有指定，就用默认的
         String prefix = StrUtil.isBlank(redissonLock.prefixKey()) ? SpElUtils.getMethodKey(method) : redissonLock.prefixKey();
+//        解析springEl表达式作为key
         String key = SpElUtils.parseSpEl(method, joinPoint.getArgs(), redissonLock.key());
         return lockService.executeWithLockThrows(prefix + ":" + key, redissonLock.waitTime(), redissonLock.unit(), joinPoint::proceed);
     }
