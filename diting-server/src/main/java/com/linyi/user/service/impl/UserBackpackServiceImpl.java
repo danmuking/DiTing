@@ -35,6 +35,7 @@ public class UserBackpackServiceImpl implements IUserBackpackService {
     @Autowired
     private ItemConfigDao itemConfigDao;
     @Autowired
+    @Lazy
     private UserBackpackServiceImpl userBackpackService;
 
     @Override
