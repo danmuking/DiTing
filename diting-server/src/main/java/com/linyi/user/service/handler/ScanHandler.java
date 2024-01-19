@@ -1,7 +1,6 @@
 package com.linyi.user.service.handler;
 
 import com.linyi.user.service.WxMsgService;
-import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;

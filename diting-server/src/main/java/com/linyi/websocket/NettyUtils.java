@@ -23,4 +23,8 @@ public class NettyUtils {
         Attribute<T> attr = channel.attr(attributeKey);
         attr.set(data);
     }
+    public static <T> T getAttr(Channel channel, AttributeKey<T> attributeKey){
+        Attribute<T> attr = channel.attr(attributeKey);
+        return attr.get();
+    }
 }

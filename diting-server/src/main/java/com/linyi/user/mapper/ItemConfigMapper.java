@@ -1,7 +1,7 @@
 package com.linyi.user.mapper;
 
-import com.linyi.user.domain.entity.ItemConfig;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.linyi.user.domain.entity.ItemConfig;
 
 /**
  * <p>

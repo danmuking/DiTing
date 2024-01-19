@@ -13,7 +13,6 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.service.IpService;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.dom4j.util.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

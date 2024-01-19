@@ -2,12 +2,10 @@ package com.linyi.websocket;
 
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
-import com.linyi.common.utils.JwtUtils;
 import com.linyi.user.domain.enums.WSReqTypeEnum;
 import com.linyi.user.domain.vo.request.WSAuthorize;
 import com.linyi.user.domain.vo.request.WSBaseReq;
 import com.linyi.user.service.WebSocketService;
-import com.mysql.cj.util.StringUtils;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

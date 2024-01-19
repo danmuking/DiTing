@@ -1,9 +1,9 @@
 package com.linyi.user.dao;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyi.user.domain.entity.ItemConfig;
 import com.linyi.user.mapper.ItemConfigMapper;
 import com.linyi.user.service.IItemConfigService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

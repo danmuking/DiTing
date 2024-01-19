@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.linyi.common.event.UserOnlineEvent;
 import com.linyi.common.utils.JwtUtils;
 import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.dto.WSChannelExtraDTO;
@@ -13,16 +14,19 @@ import com.linyi.user.domain.vo.response.ws.WSBaseResp;
 import com.linyi.user.service.LoginService;
 import com.linyi.user.service.WebSocketService;
 import com.linyi.user.service.adapter.WSAdapter;
+import com.linyi.websocket.NettyUtils;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,6 +64,9 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public void connect(Channel channel) {
@@ -102,6 +109,10 @@ public class WebSocketServiceImpl implements WebSocketService {
         String token = loginService.login(uid);
 //        向前端返回通知
         sendMsg(channel,WSAdapter.buildLoginSuccessResp(user,token));
+//        发布事件
+        user.setLastOptTime(new Date());
+        user.refreshIp(NettyUtils.getAttr(channel, NettyUtils.IP));
+        applicationEventPublisher.publishEvent(new UserOnlineEvent(this,user));
     }
 
     @Override

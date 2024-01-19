@@ -1,8 +1,6 @@
 package com.linyi.user.service;
 
 import com.linyi.common.domain.enums.IdempotentEnum;
-import com.linyi.user.domain.entity.UserBackpack;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>

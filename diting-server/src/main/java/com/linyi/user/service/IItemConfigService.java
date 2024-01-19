@@ -1,7 +1,7 @@
 package com.linyi.user.service;
 
-import com.linyi.user.domain.entity.ItemConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.linyi.user.domain.entity.ItemConfig;
 
 /**
  * <p>

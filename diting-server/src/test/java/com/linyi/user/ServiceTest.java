@@ -5,19 +5,13 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.service.IUserBackpackService;
 import com.linyi.user.service.IpService;
 import com.linyi.user.service.UserService;
-import com.linyi.user.service.impl.IpServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Date;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 
 

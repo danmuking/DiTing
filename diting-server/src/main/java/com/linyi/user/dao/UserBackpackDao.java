@@ -1,11 +1,9 @@
 package com.linyi.user.dao;
 
-import com.linyi.common.domain.enums.IdempotentEnum;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyi.common.domain.enums.YesOrNoEnum;
 import com.linyi.user.domain.entity.UserBackpack;
 import com.linyi.user.mapper.UserBackpackMapper;
-import com.linyi.user.service.IUserBackpackService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

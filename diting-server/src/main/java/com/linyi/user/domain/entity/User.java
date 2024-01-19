@@ -1,15 +1,14 @@
 package com.linyi.user.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-import java.util.Date;
-
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -24,7 +23,7 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Builder
-@TableName("user")
+@TableName(value="user",autoResultMap = true)
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -101,5 +100,11 @@ public class User implements Serializable {
     @TableField("update_time")
     private Date updateTime;
 
+    public void refreshIp(String ip) {
+        if (ipInfo == null) {
+            ipInfo = new IpInfo();
+        }
+        ipInfo.refreshIp(ip);
+    }
 
 }

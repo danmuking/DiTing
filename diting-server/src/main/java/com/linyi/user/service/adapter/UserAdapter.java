@@ -2,10 +2,8 @@ package com.linyi.user.service.adapter;
 
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
-import jodd.bean.BeanUtil;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 
 public class UserAdapter {
 

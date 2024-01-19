@@ -7,10 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.junit4.SpringRunner;
-import sun.reflect.generics.tree.VoidDescriptor;
 
 /**
  * @package: com.linyi
@@ -33,14 +31,8 @@ public class DaoTest {
 
     @Test
     public void test(){
-        User user = new User();
-        user.setId(1L);
-        user.setName("lin");
-        user.setOpenId("123456");
-        userDao.save(user);
-        user = userDao.getById(1);
-        System.out.println(user);
-        userDao.removeById(1);
+        User byId = userDao.getById(11021);
+        System.out.println(byId);
     }
 
     @Test
