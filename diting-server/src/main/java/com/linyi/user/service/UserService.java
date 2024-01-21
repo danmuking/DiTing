@@ -1,6 +1,7 @@
 package com.linyi.user.service;
 
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.vo.request.BlackReq;
 import com.linyi.user.domain.vo.request.ModifyNameReq;
 import com.linyi.user.domain.vo.request.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
@@ -50,4 +51,12 @@ public interface UserService {
      * @date 2024/1/17 17:07
      */
     void modifyName(Long uid, ModifyNameReq req);
+
+    /**
+     * @param req:
+     * @return void
+     * @description 拉黑用户
+     * @date 2024/1/21 23:00
+     */
+    void black(BlackReq req);
 }

@@ -2,11 +2,15 @@ package com.linyi.user.controller;
 
 
 import com.linyi.common.domain.vo.response.ApiResult;
+import com.linyi.common.utils.AssertUtil;
 import com.linyi.common.utils.RequestHolder;
+import com.linyi.user.domain.enums.RoleEnum;
+import com.linyi.user.domain.vo.request.BlackReq;
 import com.linyi.user.domain.vo.request.ModifyNameReq;
 import com.linyi.user.domain.vo.request.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
+import com.linyi.user.service.IRoleService;
 import com.linyi.user.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +56,13 @@ public class UserController {
     @ApiOperation("修改用户名")
     public ApiResult<Void> modifyName(@Valid @RequestBody ModifyNameReq req) {
         userService.modifyName(RequestHolder.get().getUid(), req);
+        return ApiResult.success();
+    }
+
+    @PutMapping("/black")
+    @ApiOperation("拉黑用户")
+    public ApiResult<Void> black(@Valid @RequestBody BlackReq req) {
+        userService.black(req);
         return ApiResult.success();
     }
 }
