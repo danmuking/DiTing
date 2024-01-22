@@ -1,7 +1,7 @@
 package com.linyi.user.service;
 
 
-import com.linyi.user.domain.vo.request.WSAuthorize;
+import com.linyi.user.domain.vo.request.user.WSAuthorize;
 import io.netty.channel.Channel;
 import me.chanjar.weixin.common.error.WxErrorException;
 

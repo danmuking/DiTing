@@ -9,7 +9,7 @@ import com.linyi.common.utils.JwtUtils;
 import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.dto.WSChannelExtraDTO;
 import com.linyi.user.domain.entity.User;
-import com.linyi.user.domain.vo.request.WSAuthorize;
+import com.linyi.user.domain.vo.request.user.WSAuthorize;
 import com.linyi.user.domain.vo.response.ws.WSBaseResp;
 import com.linyi.user.service.LoginService;
 import com.linyi.user.service.WebSocketService;

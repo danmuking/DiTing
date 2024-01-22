@@ -1,4 +1,4 @@
-package com.linyi.user.domain.vo.request;
+package com.linyi.user.domain.vo.request.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

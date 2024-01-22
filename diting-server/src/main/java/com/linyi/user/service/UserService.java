@@ -1,9 +1,9 @@
 package com.linyi.user.service;
 
 import com.linyi.user.domain.entity.User;
-import com.linyi.user.domain.vo.request.BlackReq;
-import com.linyi.user.domain.vo.request.ModifyNameReq;
-import com.linyi.user.domain.vo.request.WearingBadgeReq;
+import com.linyi.user.domain.vo.request.user.BlackReq;
+import com.linyi.user.domain.vo.request.user.ModifyNameReq;
+import com.linyi.user.domain.vo.request.user.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
 
