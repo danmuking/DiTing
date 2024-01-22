@@ -2,6 +2,7 @@ package com.linyi.user.service.impl;
 
 import com.linyi.common.event.UserRegisterEvent;
 import com.linyi.common.utils.AssertUtil;
+import com.linyi.common.utils.RequestHolder;
 import com.linyi.user.dao.ItemConfigDao;
 import com.linyi.user.dao.UserBackpackDao;
 import com.linyi.user.dao.UserDao;
@@ -10,10 +11,14 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.entity.UserBackpack;
 import com.linyi.user.domain.enums.ItemEnum;
 import com.linyi.user.domain.enums.ItemTypeEnum;
+import com.linyi.user.domain.enums.RoleEnum;
+import com.linyi.user.domain.enums.UserStatusEnum;
+import com.linyi.user.domain.vo.request.BlackReq;
 import com.linyi.user.domain.vo.request.ModifyNameReq;
 import com.linyi.user.domain.vo.request.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
+import com.linyi.user.service.IRoleService;
 import com.linyi.user.service.UserService;
 import com.linyi.user.service.adapter.BadgeRespAdapter;
 import com.linyi.user.service.adapter.UserAdapter;
@@ -36,6 +41,8 @@ public class UserServiceImpl implements UserService {
     ItemConfigDao itemConfigDao;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    private IRoleService iRoleService;
     @Override
     public void register(User user) {
         userDao.save(user);
@@ -98,5 +105,17 @@ public class UserServiceImpl implements UserService {
         if(useSuccess) {
             userDao.modifyName(uid, req.getName());
         }
+    }
+
+    @Override
+    public void black(BlackReq req) {
+        Long uid = RequestHolder.get().getUid();
+//        判断当前操作用户是否有权限
+//        TODO: 多种权限判断
+        boolean hasPower = iRoleService.hasPower(uid, RoleEnum.ADMIN);
+        AssertUtil.isTrue(hasPower, "没有权限");
+        User update = User.builder().id(req.getUid()).status(UserStatusEnum.BLACK.getStatus()).build();
+//        拉黑用户
+        userDao.updateById(update);
     }
 }
