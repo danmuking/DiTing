@@ -1,8 +1,11 @@
 package com.linyi.user.service;
 
+import com.linyi.common.domain.vo.request.PageBaseReq;
+import com.linyi.common.domain.vo.response.PageBaseResp;
 import com.linyi.user.domain.entity.RoomFriend;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
+import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
 
 /**
@@ -41,4 +44,13 @@ public interface FriendService {
      * @date 2024/1/23 19:06
      */
     void deleteFriend(Long uid, Long targetUid);
+
+    /**
+     * @param uid:
+     * @param request:
+     * @return Object
+     * @description 分页返回好友申请列表
+     * @date 2024/1/23 19:38
+     */
+    PageBaseResp<FriendApplyResp> pageApplyFriend(Long uid, PageBaseReq request);
 }

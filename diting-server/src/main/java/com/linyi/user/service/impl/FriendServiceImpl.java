@@ -1,7 +1,11 @@
 package com.linyi.user.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Lists;
 import com.linyi.common.annotation.RedissonLock;
+import com.linyi.common.domain.vo.request.PageBaseReq;
+import com.linyi.common.domain.vo.response.PageBaseResp;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.UserApplyDao;
 import com.linyi.user.dao.UserDao;
@@ -11,6 +15,7 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.entity.UserApply;
 import com.linyi.user.domain.entity.UserFriend;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
+import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
 import com.linyi.user.service.FriendService;
 import com.linyi.user.service.RoomService;
@@ -111,6 +116,26 @@ public class FriendServiceImpl implements FriendService {
         userFriendDao.removeByIds(friendRecordIds);
 //        禁用房间
         roomService.disableFriendRoom(Arrays.asList(uid, targetUid));
+    }
+
+    @Override
+    public PageBaseResp<FriendApplyResp> pageApplyFriend(Long uid, PageBaseReq request) {
+//        分页查询好友申请
+        IPage<UserApply> userApplyIPage = userApplyDao.friendApplyPage(uid, request.plusPage());
+//        如果没有好友申请，返回空页
+        if (CollectionUtil.isEmpty(userApplyIPage.getRecords())) {
+            return PageBaseResp.empty();
+        }
+//        将这些申请列表设为已读
+        readApples(uid, userApplyIPage);
+        return PageBaseResp.init(userApplyIPage, FriendAdapter.buildFriendApplyList(userApplyIPage.getRecords()));
+    }
+
+    private void readApples(Long uid, IPage<UserApply> userApplyIPage) {
+        List<Long> applyIds = userApplyIPage.getRecords()
+                .stream().map(UserApply::getId)
+                .collect(Collectors.toList());
+        userApplyDao.readApples(uid, applyIds);
     }
 
     @Transactional(rollbackFor = Exception.class)
