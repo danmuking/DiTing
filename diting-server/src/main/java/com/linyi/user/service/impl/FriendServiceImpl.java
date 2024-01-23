@@ -16,6 +16,7 @@ import com.linyi.user.service.adapter.FriendAdapter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +41,8 @@ public class FriendServiceImpl implements FriendService {
     @Autowired
     UserApplyDao userApplyDao;
     @Autowired
-    FriendServiceImpl friendService;
+    @Lazy
+    private FriendServiceImpl friendService;
     @Autowired
     RoomService roomService;
 
@@ -59,7 +61,7 @@ public class FriendServiceImpl implements FriendService {
 //        对方是否给你发送过好友申请,如果发送过，直接成为好友
         UserApply friendApproving = userApplyDao.getFriendApproving(request.getTargetUid(), uid);
         if(Objects.nonNull(friendApproving)) {
-            this.friendService.applyApprove(uid, new FriendApproveReq(friendApproving.getId()));
+            friendService.applyApprove(uid, new FriendApproveReq(friendApproving.getId()));
             return;
         }
 //        如果没有发送过好友申请，创建好友申请记录
@@ -69,7 +71,7 @@ public class FriendServiceImpl implements FriendService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    @RedissonLock(key = "uid+friendApproveReq.getApplyId()")
+    @RedissonLock(key = "#uid+\"_\"+#friendApproveReq.getApplyId()")
     public void applyApprove(Long uid, FriendApproveReq friendApproveReq) {
 //        验证申请记录是否存在
         UserApply userApply = userApplyDao.getById(friendApproveReq.getApplyId());

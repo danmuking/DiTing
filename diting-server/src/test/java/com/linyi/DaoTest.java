@@ -42,7 +42,7 @@ public class DaoTest {
     }
     @Test
     public void generateToken(){
-        String login = loginService.login(11007L);
+        String login = loginService.login(11022L);
         System.out.println(login);
     }
 }
