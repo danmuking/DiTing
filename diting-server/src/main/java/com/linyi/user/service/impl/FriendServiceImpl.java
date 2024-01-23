@@ -4,8 +4,10 @@ import com.google.common.collect.Lists;
 import com.linyi.common.annotation.RedissonLock;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.UserApplyDao;
+import com.linyi.user.dao.UserDao;
 import com.linyi.user.dao.UserFriendDao;
 import com.linyi.user.domain.entity.RoomFriend;
+import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.entity.UserApply;
 import com.linyi.user.domain.entity.UserFriend;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
@@ -21,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.linyi.user.domain.enums.ApplyStatusEnum.WAIT_APPROVAL;
 
@@ -40,6 +44,8 @@ public class FriendServiceImpl implements FriendService {
     UserFriendDao userFriendDao;
     @Autowired
     UserApplyDao userApplyDao;
+    @Autowired
+    UserDao userDao;
     @Autowired
     @Lazy
     private FriendServiceImpl friendService;
@@ -88,6 +94,23 @@ public class FriendServiceImpl implements FriendService {
 //        创建聊天房间
         RoomFriend roomFriend = roomService.createFriendRoom(Arrays.asList(uid, userApply.getUid()));
 //        TODO: 发送同意消息
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteFriend(Long uid, Long targetUid) {
+//        判断uid是否存在
+        User byUid = userDao.getByUid(uid);
+        AssertUtil.isNotEmpty(byUid, "用户不存在");
+//        判断是否存在好友关系
+        List<UserFriend> userFriends = userFriendDao.getUserFriend(uid, targetUid);
+        AssertUtil.isNotEmpty(userFriends, "不存在好友关系");
+        List<Long> friendRecordIds = userFriends.stream().map(UserFriend::getId).collect(Collectors.toList());
+//        删除好友关系
+//        TODO:逻辑删除
+        userFriendDao.removeByIds(friendRecordIds);
+//        禁用房间
+        roomService.disableFriendRoom(Arrays.asList(uid, targetUid));
     }
 
     @Transactional(rollbackFor = Exception.class)

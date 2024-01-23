@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.linyi.user.service.adapter.RoomAdapter.generateRoomKey;
 
@@ -57,6 +58,16 @@ public class RoomServiceImpl implements RoomService {
             roomFriend = createFriendRoom(room.getId(), uidList);
         }
         return roomFriend;
+    }
+
+    @Override
+    public void disableFriendRoom(List<Long> list) {
+//        排序，小在前，大在后
+        List<Long> collect = list.stream().sorted().collect(Collectors.toList());
+//        生成唯一单聊房间标识
+        String roomKey = generateRoomKey(collect);
+        roomFriendDao.disableRoom(roomKey);
+
     }
 
     /**

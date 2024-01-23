@@ -6,6 +6,8 @@ import com.linyi.user.service.IUserFriendService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户联系人表 服务实现类
@@ -22,5 +24,16 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
                 .eq(UserFriend::getUid, uid)
                 .eq(UserFriend::getFriendUid, targetUid)
                 .one();
+    }
+
+    public List<UserFriend> getUserFriend(Long uid, Long friendUid) {
+        return lambdaQuery()
+                .eq(UserFriend::getUid, uid)
+                .eq(UserFriend::getFriendUid, friendUid)
+                .or()
+                .eq(UserFriend::getFriendUid, uid)
+                .eq(UserFriend::getUid, friendUid)
+                .select(UserFriend::getId)
+                .list();
     }
 }
