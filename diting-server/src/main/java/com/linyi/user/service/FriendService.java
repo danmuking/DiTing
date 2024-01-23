@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
+import com.linyi.user.domain.vo.response.friend.FriendUnreadResp;
 
 /**
  * <p>
@@ -53,4 +54,12 @@ public interface FriendService {
      * @date 2024/1/23 19:38
      */
     PageBaseResp<FriendApplyResp> pageApplyFriend(Long uid, PageBaseReq request);
+
+    /**
+     * @param uid:
+     * @return FriendUnreadResp
+     * @description 好友申请为读数
+     * @date 2024/1/23 19:56
+     */
+    FriendUnreadResp unread(Long uid);
 }

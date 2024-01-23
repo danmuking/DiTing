@@ -8,6 +8,7 @@ import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
 import com.linyi.user.domain.vo.request.friend.FriendDeleteReq;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
+import com.linyi.user.domain.vo.response.friend.FriendUnreadResp;
 import com.linyi.user.service.FriendService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,4 +62,10 @@ public class FriendController {
         return ApiResult.success(friendService.pageApplyFriend(uid, request));
     }
 
+    @GetMapping("/apply/unread")
+    @ApiOperation("申请未读数")
+    public ApiResult<FriendUnreadResp> unread() {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(friendService.unread(uid));
+    }
 }

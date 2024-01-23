@@ -17,6 +17,7 @@ import com.linyi.user.domain.entity.UserFriend;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
+import com.linyi.user.domain.vo.response.friend.FriendUnreadResp;
 import com.linyi.user.service.FriendService;
 import com.linyi.user.service.RoomService;
 import com.linyi.user.service.adapter.FriendAdapter;
@@ -129,6 +130,12 @@ public class FriendServiceImpl implements FriendService {
 //        将这些申请列表设为已读
         readApples(uid, userApplyIPage);
         return PageBaseResp.init(userApplyIPage, FriendAdapter.buildFriendApplyList(userApplyIPage.getRecords()));
+    }
+
+    @Override
+    public FriendUnreadResp unread(Long uid) {
+        Integer unReadCount = userApplyDao.getUnReadCount(uid);
+        return new FriendUnreadResp(unReadCount);
     }
 
     private void readApples(Long uid, IPage<UserApply> userApplyIPage) {
