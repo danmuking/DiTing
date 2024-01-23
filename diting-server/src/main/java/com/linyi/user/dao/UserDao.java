@@ -8,6 +8,7 @@ import com.linyi.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * <p>
@@ -58,5 +59,12 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
         user.setId(uid);
         user.setName(name);
         updateById(user);
+    }
+
+    public List<User> getFriendList(List<Long> friendUids) {
+        return lambdaQuery()
+                .in(User::getId, friendUids)
+                .select(User::getId, User::getActiveStatus, User::getName, User::getAvatar)
+                .list();
     }
 }

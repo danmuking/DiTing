@@ -1,12 +1,13 @@
 package com.linyi.user.service;
 
+import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.request.PageBaseReq;
+import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.domain.vo.response.PageBaseResp;
-import com.linyi.user.domain.entity.RoomFriend;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
+import com.linyi.user.domain.vo.response.friend.FriendResp;
 import com.linyi.user.domain.vo.response.friend.FriendUnreadResp;
 
 /**
@@ -62,4 +63,13 @@ public interface FriendService {
      * @date 2024/1/23 19:56
      */
     FriendUnreadResp unread(Long uid);
+
+    /**
+     * @param uid:
+     * @param request:
+     * @return CursorPageBaseResp<FriendResp>
+     * @description 好友列表
+     * @date 2024/1/23 20:06
+     */
+    CursorPageBaseResp<FriendResp> friendList(Long uid, CursorPageBaseReq request);
 }

@@ -4,7 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Lists;
 import com.linyi.common.annotation.RedissonLock;
+import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.request.PageBaseReq;
+import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.domain.vo.response.PageBaseResp;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.UserApplyDao;
@@ -17,6 +19,7 @@ import com.linyi.user.domain.entity.UserFriend;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
+import com.linyi.user.domain.vo.response.friend.FriendResp;
 import com.linyi.user.domain.vo.response.friend.FriendUnreadResp;
 import com.linyi.user.service.FriendService;
 import com.linyi.user.service.RoomService;
@@ -27,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -136,6 +140,22 @@ public class FriendServiceImpl implements FriendService {
     public FriendUnreadResp unread(Long uid) {
         Integer unReadCount = userApplyDao.getUnReadCount(uid);
         return new FriendUnreadResp(unReadCount);
+    }
+
+    @Override
+    public CursorPageBaseResp<FriendResp> friendList(Long uid, CursorPageBaseReq request) {
+//        分页查询好友列表
+        CursorPageBaseResp<UserFriend> friendPage = userFriendDao.getFriendPage(uid, request);
+//        没有好友，返回空页
+        if (CollectionUtils.isEmpty(friendPage.getList())) {
+            return CursorPageBaseResp.empty();
+        }
+//        查询好友信息
+        List<Long> friendUids = friendPage.getList()
+                .stream().map(UserFriend::getFriendUid)
+                .collect(Collectors.toList());
+        List<User> userList = userDao.getFriendList(friendUids);
+        return CursorPageBaseResp.init(friendPage, FriendAdapter.buildFriend(friendPage.getList(), userList));
     }
 
     private void readApples(Long uid, IPage<UserApply> userApplyIPage) {

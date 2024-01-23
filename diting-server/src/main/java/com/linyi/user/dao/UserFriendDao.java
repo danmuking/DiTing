@@ -1,5 +1,8 @@
 package com.linyi.user.dao;
 
+import com.linyi.common.domain.vo.request.CursorPageBaseReq;
+import com.linyi.common.domain.vo.response.CursorPageBaseResp;
+import com.linyi.common.utils.CursorUtils;
 import com.linyi.user.domain.entity.UserFriend;
 import com.linyi.user.mapper.UserFriendMapper;
 import com.linyi.user.service.IUserFriendService;
@@ -35,5 +38,10 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
                 .eq(UserFriend::getUid, friendUid)
                 .select(UserFriend::getId)
                 .list();
+    }
+
+    public CursorPageBaseResp<UserFriend> getFriendPage(Long uid, CursorPageBaseReq cursorPageBaseReq) {
+        return CursorUtils.getCursorPageByMysql(this, cursorPageBaseReq,
+                wrapper -> wrapper.eq(UserFriend::getUid, uid), UserFriend::getId);
     }
 }

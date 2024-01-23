@@ -1,13 +1,16 @@
 package com.linyi.user.controller;
 
+import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.request.PageBaseReq;
 import com.linyi.common.domain.vo.response.ApiResult;
+import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.domain.vo.response.PageBaseResp;
 import com.linyi.common.utils.RequestHolder;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
 import com.linyi.user.domain.vo.request.friend.FriendDeleteReq;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
+import com.linyi.user.domain.vo.response.friend.FriendResp;
 import com.linyi.user.domain.vo.response.friend.FriendUnreadResp;
 import com.linyi.user.service.FriendService;
 import io.swagger.annotations.Api;
@@ -67,5 +70,12 @@ public class FriendController {
     public ApiResult<FriendUnreadResp> unread() {
         Long uid = RequestHolder.get().getUid();
         return ApiResult.success(friendService.unread(uid));
+    }
+
+    @GetMapping("/page")
+    @ApiOperation("联系人列表")
+    public ApiResult<CursorPageBaseResp<FriendResp>> friendList(@Valid CursorPageBaseReq request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(friendService.friendList(uid, request));
     }
 }

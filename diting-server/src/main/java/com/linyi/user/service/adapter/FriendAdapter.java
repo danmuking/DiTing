@@ -1,14 +1,19 @@
 package com.linyi.user.service.adapter;
 
 import com.linyi.common.domain.vo.response.PageBaseResp;
+import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.entity.UserApply;
+import com.linyi.user.domain.entity.UserFriend;
 import com.linyi.user.domain.enums.ApplyReadStatusEnum;
 import com.linyi.user.domain.enums.ApplyStatusEnum;
 import com.linyi.user.domain.enums.ApplyTypeEnum;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
+import com.linyi.user.domain.vo.response.friend.FriendResp;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +45,19 @@ public class FriendAdapter {
             friendApplyResp.setMsg(userApply.getMsg());
             friendApplyResp.setStatus(userApply.getStatus());
             return friendApplyResp;
+        }).collect(Collectors.toList());
+    }
+
+    public static List<FriendResp> buildFriend(List<UserFriend> list, List<User> userList) {
+        Map<Long, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, user -> user));
+        return list.stream().map(userFriend -> {
+            FriendResp resp = new FriendResp();
+            resp.setUid(userFriend.getFriendUid());
+            User user = userMap.get(userFriend.getFriendUid());
+            if (Objects.nonNull(user)) {
+                resp.setActiveStatus(user.getActiveStatus());
+            }
+            return resp;
         }).collect(Collectors.toList());
     }
 }
