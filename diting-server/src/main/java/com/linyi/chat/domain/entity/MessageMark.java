@@ -1,4 +1,4 @@
-package com.linyi.user.domain.entity;
+package com.linyi.chat.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -11,16 +11,16 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 房间表
+ * 消息标记表
  * </p>
  *
  * @author lin
- * @since 2024-01-22
+ * @since 2024-01-24
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("room")
-public class Room implements Serializable {
+@TableName("message_mark")
+public class MessageMark implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,34 +31,28 @@ public class Room implements Serializable {
     private Long id;
 
     /**
-     * 房间类型 1群聊 2单聊
+     * 消息表id
+     */
+    @TableField("msg_id")
+    private Long msgId;
+
+    /**
+     * 标记人uid
+     */
+    @TableField("uid")
+    private Long uid;
+
+    /**
+     * 标记类型 1点赞 2举报
      */
     @TableField("type")
     private Integer type;
 
     /**
-     * 是否全员展示 0否 1是
+     * 消息状态 0正常 1取消
      */
-    @TableField("hot_flag")
-    private Integer hotFlag;
-
-    /**
-     * 群最后消息的更新时间（热点群不需要写扩散，只更新这里）
-     */
-    @TableField("active_time")
-    private LocalDateTime activeTime;
-
-    /**
-     * 会话中的最后一条消息id
-     */
-    @TableField("last_msg_id")
-    private Long lastMsgId;
-
-    /**
-     * 额外信息（根据不同类型房间有不同存储的东西）
-     */
-    @TableField("ext_json")
-    private String extJson;
+    @TableField("status")
+    private Integer status;
 
     /**
      * 创建时间
@@ -73,7 +67,4 @@ public class Room implements Serializable {
     private LocalDateTime updateTime;
 
 
-    public boolean isHotRoom() {
-        return hotFlag == 1;
-    }
 }

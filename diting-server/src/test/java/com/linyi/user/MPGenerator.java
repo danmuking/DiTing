@@ -38,7 +38,7 @@ public class MPGenerator {
 
         //包配置
         PackageConfig packageConfig = new PackageConfig();
-        packageConfig.setParent("com.linyi.user");//自定义包的路径
+        packageConfig.setParent("com.linyi.chat");//自定义包的路径
         packageConfig.setEntity("domain.entity");
         packageConfig.setMapper("mapper");
         packageConfig.setController("controller");
@@ -57,7 +57,7 @@ public class MPGenerator {
         strategyConfig.setEntityTableFieldAnnotationEnable(true);
         //todo 这里修改需要自动生成的表结构
         strategyConfig.setInclude(
-                "room","room_friend","user_apply","user_friend"
+                "message_mark"
         );
         //自动填充字段,在项目开发过程中,例如创建时间，修改时间,每次，都需要我们来指定，太麻烦了,设置为自动填充规则，就不需要我们赋值咯
         List<TableFill> list = new ArrayList<TableFill>();
