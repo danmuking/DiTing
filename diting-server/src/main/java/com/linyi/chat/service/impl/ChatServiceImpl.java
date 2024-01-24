@@ -3,11 +3,14 @@ package com.linyi.chat.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.linyi.chat.dao.ContactDao;
 import com.linyi.chat.dao.MessageDao;
+import com.linyi.chat.dao.MessageMarkDao;
 import com.linyi.chat.domain.entity.Contact;
 import com.linyi.chat.domain.entity.Message;
+import com.linyi.chat.domain.entity.MessageMark;
 import com.linyi.chat.domain.vo.request.ChatMessagePageReq;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.ChatService;
+import com.linyi.chat.service.adapter.MessageAdapter;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.RoomDao;
@@ -35,6 +38,8 @@ public class ChatServiceImpl implements ChatService {
     RoomDao roomDao;
     @Autowired
     MessageDao messageDao;
+    @Autowired
+    MessageMarkDao messageMarkDao;
     @Override
     public CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq request, Long uid) {
 //        获取该用户能见的最后一条消息id，防止用户被踢出后能看见之后的消息
@@ -51,10 +56,9 @@ public class ChatServiceImpl implements ChatService {
         if (CollectionUtil.isEmpty(messages)) {
             return new ArrayList<>();
         }
-        //查询消息标志
-//        List<ChatMessageResp.MessageMark> msgMark = messageMarkDao.getValidMarkByMsgIdBatch(messages.stream().map(Message::getId).collect(Collectors.toList()));
-//        return MessageAdapter.buildMsgResp(messages, msgMark, uid);
-        return null;
+        //查询对应的消息标志
+        List<MessageMark> msgMark = messageMarkDao.getValidMarkByMsgIdBatch(messages.stream().map(Message::getId).collect(Collectors.toList()));
+        return MessageAdapter.buildMsgResp(messages, msgMark, uid);
     }
 
     /**

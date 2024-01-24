@@ -3,7 +3,7 @@ package com.linyi.user.domain.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
+import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import lombok.Data;
@@ -46,7 +46,7 @@ public class Room implements Serializable {
      * 群最后消息的更新时间（热点群不需要写扩散，只更新这里）
      */
     @TableField("active_time")
-    private LocalDateTime activeTime;
+    private Date activeTime;
 
     /**
      * 会话中的最后一条消息id
@@ -64,13 +64,13 @@ public class Room implements Serializable {
      * 创建时间
      */
     @TableField("create_time")
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 修改时间
      */
     @TableField("update_time")
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
 
     public boolean isHotRoom() {

@@ -30,7 +30,7 @@ import javax.validation.Valid;
 @RequestMapping("/capi/chat")
 @Api(tags = "聊天室相关接口")
 @Slf4j
-public class ContactController {
+public class ChatController {
     @Autowired
     private ChatService chatService;
 
