@@ -17,6 +17,8 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.entity.UserApply;
 import com.linyi.user.domain.entity.UserFriend;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
+import com.linyi.user.domain.vo.request.friend.FriendCheckReq;
+import com.linyi.user.domain.vo.request.friend.FriendCheckResp;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
 import com.linyi.user.domain.vo.response.friend.FriendResp;
@@ -35,6 +37,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.linyi.user.domain.enums.ApplyStatusEnum.WAIT_APPROVAL;
@@ -156,6 +159,24 @@ public class FriendServiceImpl implements FriendService {
                 .collect(Collectors.toList());
         List<User> userList = userDao.getFriendList(friendUids);
         return CursorPageBaseResp.init(friendPage, FriendAdapter.buildFriend(friendPage.getList(), userList));
+    }
+
+    @Override
+    public FriendCheckResp check(Long uid, FriendCheckReq request) {
+//        批量获取好友关系
+        List<UserFriend> friendList = userFriendDao.getByFriends(uid,request.getUidList());
+//        判断是否存在好友关系
+//        构建好友集合
+        Set<Long> friends = friendList.stream().map(UserFriend::getFriendUid).collect(Collectors.toSet());
+//        构建返回结果
+        List<FriendCheckResp.FriendCheck> friendCheckList = request.getUidList().stream().map(friendUid ->{
+            FriendCheckResp.FriendCheck friendCheck = new FriendCheckResp.FriendCheck();
+            friendCheck.setUid(friendUid);
+            friendCheck.setIsFriend(friends.contains(friendUid));
+            return friendCheck;
+        }).collect(Collectors.toList());
+
+        return new FriendCheckResp(friendCheckList);
     }
 
     private void readApples(Long uid, IPage<UserApply> userApplyIPage) {

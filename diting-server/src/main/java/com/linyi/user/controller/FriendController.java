@@ -7,6 +7,8 @@ import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.domain.vo.response.PageBaseResp;
 import com.linyi.common.utils.RequestHolder;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
+import com.linyi.user.domain.vo.request.friend.FriendCheckReq;
+import com.linyi.user.domain.vo.request.friend.FriendCheckResp;
 import com.linyi.user.domain.vo.request.friend.FriendDeleteReq;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
@@ -77,5 +79,12 @@ public class FriendController {
     public ApiResult<CursorPageBaseResp<FriendResp>> friendList(@Valid CursorPageBaseReq request) {
         Long uid = RequestHolder.get().getUid();
         return ApiResult.success(friendService.friendList(uid, request));
+    }
+
+    @GetMapping("/check")
+    @ApiOperation("批量判断是否是自己好友")
+    public ApiResult<FriendCheckResp> check(@Valid FriendCheckReq request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(friendService.check(uid, request));
     }
 }

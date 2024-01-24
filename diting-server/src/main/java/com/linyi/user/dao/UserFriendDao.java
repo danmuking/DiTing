@@ -4,6 +4,7 @@ import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.CursorUtils;
 import com.linyi.user.domain.entity.UserFriend;
+import com.linyi.user.domain.vo.request.friend.FriendCheckReq;
 import com.linyi.user.mapper.UserFriendMapper;
 import com.linyi.user.service.IUserFriendService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -43,5 +44,12 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
     public CursorPageBaseResp<UserFriend> getFriendPage(Long uid, CursorPageBaseReq cursorPageBaseReq) {
         return CursorUtils.getCursorPageByMysql(this, cursorPageBaseReq,
                 wrapper -> wrapper.eq(UserFriend::getUid, uid), UserFriend::getId);
+    }
+
+    public List<UserFriend> getByFriends(Long uid, List<Long> uidList) {
+        return lambdaQuery()
+                .eq(UserFriend::getUid, uid)
+                .in(UserFriend::getFriendUid, uidList)
+                .list();
     }
 }

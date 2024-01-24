@@ -5,6 +5,8 @@ import com.linyi.common.domain.vo.request.PageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.domain.vo.response.PageBaseResp;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
+import com.linyi.user.domain.vo.request.friend.FriendCheckReq;
+import com.linyi.user.domain.vo.request.friend.FriendCheckResp;
 import com.linyi.user.domain.vo.response.friend.FriendApplyResp;
 import com.linyi.user.domain.vo.response.friend.FriendApproveReq;
 import com.linyi.user.domain.vo.response.friend.FriendResp;
@@ -72,4 +74,13 @@ public interface FriendService {
      * @date 2024/1/23 20:06
      */
     CursorPageBaseResp<FriendResp> friendList(Long uid, CursorPageBaseReq request);
+
+    /**
+     * @param uid:
+     * @param request:
+     * @return FriendCheckResp
+     * @description 检查是否是自己好友
+     * @date 2024/1/24 19:45
+     */
+    FriendCheckResp check(Long uid, FriendCheckReq request);
 }
