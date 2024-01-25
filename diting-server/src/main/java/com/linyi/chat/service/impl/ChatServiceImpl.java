@@ -52,6 +52,13 @@ public class ChatServiceImpl implements ChatService {
         return CursorPageBaseResp.init(cursorPage, getMsgRespBatch(cursorPage.getList(), uid));
     }
 
+    /**
+     * @param messages:
+     * @param uid:
+     * @return List<ChatMessageResp>
+     * @description 批量获取消息响应
+     * @date 2024/1/25 18:31
+     */
     private List<ChatMessageResp> getMsgRespBatch(List<Message> messages, Long uid) {
         if (CollectionUtil.isEmpty(messages)) {
             return new ArrayList<>();

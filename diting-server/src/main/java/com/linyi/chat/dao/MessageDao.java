@@ -30,4 +30,20 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
             wrapper.le(Objects.nonNull(lastMsgId), Message::getId, lastMsgId);
         },Message::getId);
     }
+
+    /**
+     * @param roomId:
+     * @param replyMsgId:
+     * @param id:
+     * @return Integer
+     * @description 计算在当前消息和回复的消息中间有多少条消息
+     * @date 2024/1/25 19:02
+     */
+    public Integer getGapCount(Long roomId, Long replyMsgId, Long id) {
+        return lambdaQuery()
+                .eq(Message::getRoomId, roomId)
+                .gt(Message::getId, replyMsgId)
+                .le(Message::getId, id)
+                .count();
+    }
 }

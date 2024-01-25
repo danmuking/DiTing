@@ -28,6 +28,12 @@ public abstract class AbstractMsgHandler<Req> {
     private MessageDao messageDao;
     private Class<Req> bodyClass;
 
+    /**
+     * @param :
+     * @return void
+     * @description 构造完成把自己注册到策略工厂
+     * @date 2024/1/25 19:28
+     */
     @PostConstruct
     private void init() {
         ParameterizedType genericSuperclass = (ParameterizedType) this.getClass().getGenericSuperclass();
