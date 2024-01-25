@@ -1,6 +1,7 @@
 package com.linyi.chat.controller;
 
 
+import com.linyi.chat.domain.vo.request.ChatMessageMarkReq;
 import com.linyi.chat.domain.vo.request.ChatMessagePageReq;
 import com.linyi.chat.domain.vo.request.ChatMessageReq;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
@@ -51,6 +52,14 @@ public class ChatController {
         Long msgId = chatService.sendMsg(request, RequestHolder.get().getUid());
         //返回完整消息格式，方便前端展示
         return ApiResult.success(chatService.getMsgResp(msgId, RequestHolder.get().getUid()));
+    }
+
+    @PutMapping("/msg/mark")
+    @ApiOperation("消息标记")
+//    @FrequencyControl(time = 10, count = 5, target = FrequencyControl.Target.UID)
+    public ApiResult<Void> setMsgMark(@Valid @RequestBody ChatMessageMarkReq request) {
+        chatService.setMsgMark(RequestHolder.get().getUid(), request);
+        return ApiResult.success();
     }
 }
 

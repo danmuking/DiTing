@@ -27,4 +27,12 @@ public class MessageMarkDao extends ServiceImpl<MessageMarkMapper, MessageMark> 
                 .eq(MessageMark::getStatus, NormalOrNoEnum.NORMAL.getStatus())
                 .list();
     }
+
+    public MessageMark get(Long uid, Long msgId, Integer markType) {
+        return lambdaQuery()
+                .eq(MessageMark::getUid, uid)
+                .eq(MessageMark::getMsgId, msgId)
+                .eq(MessageMark::getType, markType)
+                .one();
+    }
 }

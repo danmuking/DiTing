@@ -4,11 +4,15 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.linyi.chat.dao.*;
 import com.linyi.chat.domain.entity.*;
+import com.linyi.chat.domain.enums.MessageMarkActTypeEnum;
+import com.linyi.chat.domain.vo.request.ChatMessageMarkReq;
 import com.linyi.chat.domain.vo.request.ChatMessagePageReq;
 import com.linyi.chat.domain.vo.request.ChatMessageReq;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.ChatService;
 import com.linyi.chat.service.adapter.MessageAdapter;
+import com.linyi.chat.service.strategy.mark.AbstractMsgMarkStrategy;
+import com.linyi.chat.service.strategy.mark.MsgMarkFactory;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
 import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
 import com.linyi.common.domain.enums.NormalOrNoEnum;
@@ -84,6 +88,19 @@ public class ChatServiceImpl implements ChatService {
     public ChatMessageResp getMsgResp(Long msgId, Long uid) {
         Message msg = messageDao.getById(msgId);
         return getMsgResp(msg, uid);
+    }
+
+    @Override
+    public void setMsgMark(Long uid, ChatMessageMarkReq request) {
+        AbstractMsgMarkStrategy strategy = MsgMarkFactory.getStrategyNoNull(request.getMarkType());
+        switch (MessageMarkActTypeEnum.of(request.getActType())) {
+            case MARK:
+                strategy.mark(uid, request.getMsgId());
+                break;
+            case UN_MARK:
+                strategy.unMark(uid, request.getMsgId());
+                break;
+        }
     }
 
     private ChatMessageResp getMsgResp(Message msg, Long uid) {

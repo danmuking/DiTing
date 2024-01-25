@@ -1,5 +1,6 @@
 package com.linyi.chat.service;
 
+import com.linyi.chat.domain.vo.request.ChatMessageMarkReq;
 import com.linyi.chat.domain.vo.request.ChatMessagePageReq;
 import com.linyi.chat.domain.vo.request.ChatMessageReq;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
@@ -33,4 +34,13 @@ public interface ChatService {
      * @date 2024/1/25 20:14
      */
     ChatMessageResp getMsgResp(Long msgId, Long uid);
+
+    /**
+     * @param uid:
+     * @param request:
+     * @return void
+     * @description 设置消息标记
+     * @date 2024/1/25 22:26
+     */
+    void setMsgMark(Long uid, ChatMessageMarkReq request);
 }
