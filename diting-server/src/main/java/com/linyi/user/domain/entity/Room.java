@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import com.linyi.common.domain.enums.RoomTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -75,5 +77,13 @@ public class Room implements Serializable {
 
     public boolean isHotRoom() {
         return hotFlag == 1;
+    }
+
+    public boolean isRoomFriend() {
+        return type == RoomTypeEnum.FRIEND.getType();
+    }
+
+    public boolean isRoomGroup() {
+        return type == RoomTypeEnum.GROUP.getType();
     }
 }

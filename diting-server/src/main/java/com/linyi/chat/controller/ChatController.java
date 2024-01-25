@@ -2,6 +2,7 @@ package com.linyi.chat.controller;
 
 
 import com.linyi.chat.domain.vo.request.ChatMessagePageReq;
+import com.linyi.chat.domain.vo.request.ChatMessageReq;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.ChatService;
 import com.linyi.common.domain.vo.response.ApiResult;
@@ -12,9 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -41,6 +40,17 @@ public class ChatController {
         CursorPageBaseResp<ChatMessageResp> msgPage = chatService.getMsgPage(request, RequestHolder.get().getUid());
 //        filterBlackMsg(msgPage);
         return ApiResult.success(msgPage);
+    }
+
+    @PostMapping("/msg")
+    @ApiOperation("发送消息")
+//    @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)
+//    @FrequencyControl(time = 30, count = 5, target = FrequencyControl.Target.UID)
+//    @FrequencyControl(time = 60, count = 10, target = FrequencyControl.Target.UID)
+    public ApiResult<ChatMessageResp> sendMsg(@Valid @RequestBody ChatMessageReq request) {
+        Long msgId = chatService.sendMsg(request, RequestHolder.get().getUid());
+        //返回完整消息格式，方便前端展示
+        return ApiResult.success(chatService.getMsgResp(msgId, RequestHolder.get().getUid()));
     }
 }
 

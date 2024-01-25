@@ -15,6 +15,11 @@ import org.springframework.stereotype.Service;
  * @since 2024-01-24
  */
 @Service
-public class RoomGroupDao extends ServiceImpl<RoomGroupMapper, RoomGroup> implements IRoomGroupService {
+public class RoomGroupDao extends ServiceImpl<RoomGroupMapper, RoomGroup> {
 
+    public RoomGroup getByRoomId(Long roomId) {
+        return lambdaQuery()
+                .eq(RoomGroup::getRoomId, roomId)
+                .one();
+    }
 }
