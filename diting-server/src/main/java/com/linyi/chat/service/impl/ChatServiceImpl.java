@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import com.linyi.chat.dao.*;
+import com.linyi.chat.domain.dto.MsgReadInfoDTO;
 import com.linyi.chat.domain.entity.*;
 import com.linyi.chat.domain.enums.MessageMarkActTypeEnum;
 import com.linyi.chat.domain.enums.MessageTypeEnum;
@@ -12,6 +13,7 @@ import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.ChatService;
+import com.linyi.chat.service.ContactService;
 import com.linyi.chat.service.adapter.MessageAdapter;
 import com.linyi.chat.service.adapter.RoomAdapter;
 import com.linyi.chat.service.strategy.mark.AbstractMsgMarkStrategy;
@@ -66,6 +68,8 @@ public class ChatServiceImpl implements ChatService {
     RecallMsgHandler recallMsgHandler;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    private ContactService contactService;
     @Override
     public CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq request, Long uid) {
 //        获取该用户能见的最后一条消息id，防止用户被踢出后能看见之后的消息
@@ -136,6 +140,15 @@ public class ChatServiceImpl implements ChatService {
             return CursorPageBaseResp.empty();
         }
         return CursorPageBaseResp.init(page, RoomAdapter.buildReadResp(page.getList()));
+    }
+
+    @Override
+    public Collection<MsgReadInfoDTO> getMsgReadInfo(Long uid, ChatMessageReadInfoReq request) {
+        List<Message> messages = messageDao.listByIds(request.getMsgIds());
+        messages.forEach(message -> {
+            AssertUtil.equal(uid, message.getFromUid(), "只能查询自己发送的消息");
+        });
+        return contactService.getMsgReadInfo(messages).values();
     }
 
     private void checkRecall(Long uid, Message message) {

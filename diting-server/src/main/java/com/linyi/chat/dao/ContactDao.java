@@ -5,7 +5,6 @@ import com.linyi.chat.domain.entity.Contact;
 import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.vo.request.ChatMessageReadReq;
 import com.linyi.chat.mapper.ContactMapper;
-import com.linyi.chat.service.IContactService;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
@@ -42,5 +41,19 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact>{
             wrapper.ne(Contact::getUid, message.getFromUid());// 不需要查询出自己
             wrapper.lt(Contact::getReadTime, message.getCreateTime());// 已读时间小于消息发送时间
         }, Contact::getReadTime);
+    }
+
+    public Integer getTotalCount(Long roomId) {
+        return lambdaQuery()
+                .eq(Contact::getRoomId, roomId)
+                .count();
+    }
+
+    public Integer getReadCount(Message message) {
+        return lambdaQuery()
+                .eq(Contact::getRoomId, message.getRoomId())
+                .ne(Contact::getUid, message.getFromUid())// 不需要查询出自己
+                .ge(Contact::getReadTime, message.getCreateTime())
+                .count();
     }
 }

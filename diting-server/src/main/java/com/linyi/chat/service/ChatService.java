@@ -1,5 +1,6 @@
 package com.linyi.chat.service;
 
+import com.linyi.chat.domain.dto.MsgReadInfoDTO;
 import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
@@ -54,4 +55,6 @@ public interface ChatService {
     void recallMsg(Long uid, ChatMessageBaseReq request);
 
     CursorPageBaseResp<ChatMessageReadResp> getReadPage(Long uid, ChatMessageReadReq request);
+
+    Collection<MsgReadInfoDTO> getMsgReadInfo(Long uid, ChatMessageReadInfoReq request);
 }

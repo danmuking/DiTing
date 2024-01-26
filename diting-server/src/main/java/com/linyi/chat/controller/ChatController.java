@@ -1,6 +1,7 @@
 package com.linyi.chat.controller;
 
 
+import com.linyi.chat.domain.dto.MsgReadInfoDTO;
 import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 
 /**
  * <p>
@@ -72,6 +74,13 @@ public class ChatController {
     public ApiResult<CursorPageBaseResp<ChatMessageReadResp>> getReadPage(@Valid ChatMessageReadReq request) {
         Long uid = RequestHolder.get().getUid();
         return ApiResult.success(chatService.getReadPage(uid, request));
+    }
+
+    @GetMapping("/msg/read")
+    @ApiOperation("获取消息的已读未读总数")
+    public ApiResult<Collection<MsgReadInfoDTO>> getReadInfo(@Valid ChatMessageReadInfoReq request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(chatService.getMsgReadInfo(uid, request));
     }
 }
 
