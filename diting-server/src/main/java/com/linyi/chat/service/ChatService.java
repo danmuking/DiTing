@@ -57,4 +57,6 @@ public interface ChatService {
     CursorPageBaseResp<ChatMessageReadResp> getReadPage(Long uid, ChatMessageReadReq request);
 
     Collection<MsgReadInfoDTO> getMsgReadInfo(Long uid, ChatMessageReadInfoReq request);
+
+    void msgRead(Long uid, ChatMessageMemberReq request);
 }

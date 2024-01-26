@@ -82,5 +82,12 @@ public class ChatController {
         Long uid = RequestHolder.get().getUid();
         return ApiResult.success(chatService.getMsgReadInfo(uid, request));
     }
+    @PutMapping("/msg/read")
+    @ApiOperation("消息阅读上报")
+    public ApiResult<Void> msgRead(@Valid @RequestBody ChatMessageMemberReq request) {
+        Long uid = RequestHolder.get().getUid();
+        chatService.msgRead(uid, request);
+        return ApiResult.success();
+    }
 }
 

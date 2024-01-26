@@ -151,6 +151,23 @@ public class ChatServiceImpl implements ChatService {
         return contactService.getMsgReadInfo(messages).values();
     }
 
+    @Override
+    public void msgRead(Long uid, ChatMessageMemberReq request) {
+        Contact contact = contactDao.get(uid, request.getRoomId());
+        if (Objects.nonNull(contact)) {
+            Contact update = new Contact();
+            update.setId(contact.getId());
+            update.setReadTime(new Date());
+            contactDao.updateById(update);
+        } else {
+            Contact insert = new Contact();
+            insert.setUid(uid);
+            insert.setRoomId(request.getRoomId());
+            insert.setReadTime(new Date());
+            contactDao.save(insert);
+        }
+    }
+
     private void checkRecall(Long uid, Message message) {
         AssertUtil.isNotEmpty(message, "消息有误");
         AssertUtil.notEqual(message.getType(), MessageTypeEnum.RECALL.getType(), "消息无法撤回");
