@@ -1,5 +1,8 @@
 package com.linyi.user.service;
 
+import com.linyi.chat.domain.vo.response.ChatRoomResp;
+import com.linyi.common.domain.vo.request.CursorPageBaseReq;
+import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.user.domain.entity.Room;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.linyi.user.domain.entity.RoomFriend;
@@ -25,4 +28,13 @@ public interface RoomService {
      * @date 2024/1/23 19:15
      */
     void disableFriendRoom(List<Long> list);
+
+    /**
+     * @param request:
+     * @param uid:
+     * @return CursorPageBaseResp<ChatRoomResp>
+     * @description 获取会话列表
+     * @date 2024/1/26 22:29
+     */
+    CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid);
 }

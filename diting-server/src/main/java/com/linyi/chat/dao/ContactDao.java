@@ -5,6 +5,7 @@ import com.linyi.chat.domain.entity.Contact;
 import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.vo.request.ChatMessageReadReq;
 import com.linyi.chat.mapper.ContactMapper;
+import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
@@ -55,5 +56,11 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact>{
                 .ne(Contact::getUid, message.getFromUid())// 不需要查询出自己
                 .ge(Contact::getReadTime, message.getCreateTime())
                 .count();
+    }
+
+    public CursorPageBaseResp<Contact> getContactPage(Long uid, CursorPageBaseReq request) {
+        return CursorUtils.getCursorPageByMysql(this, request, wrapper -> {
+            wrapper.eq(Contact::getUid, uid);
+        }, Contact::getActiveTime);
     }
 }
