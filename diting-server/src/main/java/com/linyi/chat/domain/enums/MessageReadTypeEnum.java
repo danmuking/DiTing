@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 public enum MessageReadTypeEnum {
-    READ(1, "已读"),
-    UNREAD(2, "未读"),
+    READ(1L, "已读"),
+    UNREAD(2L, "未读"),
     ;
 
-    private final Integer type;
+    private final Long type;
     private final String desc;
 
-    private static Map<Integer, MessageReadTypeEnum> cache;
+    private static Map<Long, MessageReadTypeEnum> cache;
 
     static {
         cache = Arrays.stream(MessageReadTypeEnum.values()).collect(Collectors.toMap(MessageReadTypeEnum::getType, Function.identity()));

@@ -54,9 +54,30 @@ public interface ChatService {
      */
     void recallMsg(Long uid, ChatMessageBaseReq request);
 
+    /**
+     * @param uid:
+     * @param request:
+     * @return CursorPageBaseResp<ChatMessageReadResp>
+     * @description 消息已读或未读用户列表查询
+     * @date 2024/1/26 19:59
+     */
     CursorPageBaseResp<ChatMessageReadResp> getReadPage(Long uid, ChatMessageReadReq request);
 
+    /**
+     * @param uid:
+     * @param request:
+     * @return Collection<MsgReadInfoDTO>
+     * @description 消息已读未读总数信息
+     * @date 2024/1/26 20:01
+     */
     Collection<MsgReadInfoDTO> getMsgReadInfo(Long uid, ChatMessageReadInfoReq request);
 
+    /**
+     * @param uid:
+     * @param request:
+     * @return void
+     * @description 会话阅读信息记录
+     * @date 2024/1/26 19:59
+     */
     void msgRead(Long uid, ChatMessageMemberReq request);
 }

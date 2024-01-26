@@ -8,6 +8,7 @@ import com.linyi.chat.dao.*;
 import com.linyi.chat.domain.dto.MsgReadInfoDTO;
 import com.linyi.chat.domain.entity.*;
 import com.linyi.chat.domain.enums.MessageMarkActTypeEnum;
+import com.linyi.chat.domain.enums.MessageReadTypeEnum;
 import com.linyi.chat.domain.enums.MessageTypeEnum;
 import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
@@ -130,9 +131,11 @@ public class ChatServiceImpl implements ChatService {
         AssertUtil.isNotEmpty(message, "消息id有误");
         AssertUtil.equal(uid, message.getFromUid(), "只能查看自己的消息");
         CursorPageBaseResp<Contact> page;
-        if (request.getSearchType() == 1) {//已读
+//        查询已读用户
+        if (MessageReadTypeEnum.READ.getType() == request.getSearchType()) {//已读
             page = contactDao.getReadPage(message, request);
         }
+//        查询未读用户
         else {
             page = contactDao.getUnReadPage(message, request);
         }

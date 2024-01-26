@@ -32,10 +32,12 @@ public class ContactServiceImpl implements ContactService {
         Map<Long, List<Message>> roomGroup = messages.stream().collect(Collectors.groupingBy(Message::getRoomId));
         AssertUtil.equal(roomGroup.size(), 1, "只能查相同房间下的消息");
         Long roomId = roomGroup.keySet().iterator().next();
+//        当前房间的总阅读数
         Integer totalCount = contactDao.getTotalCount(roomId);
         return messages.stream().map(message -> {
             MsgReadInfoDTO readInfoDTO = new MsgReadInfoDTO();
             readInfoDTO.setMsgId(message.getId());
+//            当前房间阅读时间在消息发出之后的数量就是已读数，未读数就是总数减去已读数减去自己
             Integer readCount = contactDao.getReadCount(message);
             readInfoDTO.setReadCount(readCount);
             readInfoDTO.setUnReadCount(totalCount - readCount - 1);
