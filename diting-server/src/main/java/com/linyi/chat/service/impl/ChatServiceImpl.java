@@ -2,19 +2,23 @@ package com.linyi.chat.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import com.linyi.chat.dao.*;
 import com.linyi.chat.domain.entity.*;
 import com.linyi.chat.domain.enums.MessageMarkActTypeEnum;
-import com.linyi.chat.domain.vo.request.ChatMessageMarkReq;
-import com.linyi.chat.domain.vo.request.ChatMessagePageReq;
-import com.linyi.chat.domain.vo.request.ChatMessageReq;
+import com.linyi.chat.domain.enums.MessageTypeEnum;
+import com.linyi.chat.domain.vo.request.*;
+import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.ChatService;
 import com.linyi.chat.service.adapter.MessageAdapter;
+import com.linyi.chat.service.adapter.RoomAdapter;
 import com.linyi.chat.service.strategy.mark.AbstractMsgMarkStrategy;
 import com.linyi.chat.service.strategy.mark.MsgMarkFactory;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
 import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
+import com.linyi.chat.service.strategy.msg.RecallMsgHandler;
 import com.linyi.common.domain.enums.NormalOrNoEnum;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.event.MessageSendEvent;
@@ -23,16 +27,15 @@ import com.linyi.user.dao.RoomDao;
 import com.linyi.user.dao.RoomFriendDao;
 import com.linyi.user.domain.entity.Room;
 import com.linyi.user.domain.entity.RoomFriend;
+import com.linyi.user.domain.enums.RoleEnum;
+import com.linyi.user.service.IRoleService;
 import net.sf.jsqlparser.expression.operators.arithmetic.Concat;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +60,10 @@ public class ChatServiceImpl implements ChatService {
     RoomGroupDao roomGroupDao;
     @Autowired
     GroupMemberDao groupMemberDao;
+    @Autowired
+    IRoleService iRoleService;
+    @Autowired
+    RecallMsgHandler recallMsgHandler;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
     @Override
@@ -101,6 +108,50 @@ public class ChatServiceImpl implements ChatService {
                 strategy.unMark(uid, request.getMsgId());
                 break;
         }
+    }
+
+    @Override
+    public void recallMsg(Long uid, ChatMessageBaseReq request) {
+        Message message = messageDao.getById(request.getMsgId());
+//        校验是否有权限撤回
+        checkRecall(uid, message);
+//        撤回消息
+        recallMsgHandler.recall(uid, message);
+    }
+
+    @Override
+    public CursorPageBaseResp<ChatMessageReadResp> getReadPage(Long uid, ChatMessageReadReq request) {
+//        获取消息信息
+        Message message = messageDao.getById(request.getMsgId());
+        AssertUtil.isNotEmpty(message, "消息id有误");
+        AssertUtil.equal(uid, message.getFromUid(), "只能查看自己的消息");
+        CursorPageBaseResp<Contact> page;
+        if (request.getSearchType() == 1) {//已读
+            page = contactDao.getReadPage(message, request);
+        }
+        else {
+            page = contactDao.getUnReadPage(message, request);
+        }
+        if (CollectionUtil.isEmpty(page.getList())) {
+            return CursorPageBaseResp.empty();
+        }
+        return CursorPageBaseResp.init(page, RoomAdapter.buildReadResp(page.getList()));
+    }
+
+    private void checkRecall(Long uid, Message message) {
+        AssertUtil.isNotEmpty(message, "消息有误");
+        AssertUtil.notEqual(message.getType(), MessageTypeEnum.RECALL.getType(), "消息无法撤回");
+//        拥有管理权限,可以撤回
+        boolean hasPower = iRoleService.hasPower(uid, RoleEnum.CHAT_MANAGER);
+        if (hasPower) {
+            return;
+        }
+//        消息发送者可以撤回
+        boolean self = Objects.equals(uid, message.getFromUid());
+        AssertUtil.isTrue(self, "抱歉,您没有权限");
+//        消息发送时间小于2分钟可以撤回
+        long between = DateUtil.between(message.getCreateTime(), new Date(), DateUnit.MINUTE);
+        AssertUtil.isTrue(between < 2, "覆水难收，超过2分钟的消息不能撤回哦~~");
     }
 
     private ChatMessageResp getMsgResp(Message msg, Long uid) {

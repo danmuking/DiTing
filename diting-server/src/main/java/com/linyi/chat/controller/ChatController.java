@@ -1,9 +1,8 @@
 package com.linyi.chat.controller;
 
 
-import com.linyi.chat.domain.vo.request.ChatMessageMarkReq;
-import com.linyi.chat.domain.vo.request.ChatMessagePageReq;
-import com.linyi.chat.domain.vo.request.ChatMessageReq;
+import com.linyi.chat.domain.vo.request.*;
+import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.ChatService;
 import com.linyi.common.domain.vo.response.ApiResult;
@@ -13,7 +12,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -60,6 +58,20 @@ public class ChatController {
     public ApiResult<Void> setMsgMark(@Valid @RequestBody ChatMessageMarkReq request) {
         chatService.setMsgMark(RequestHolder.get().getUid(), request);
         return ApiResult.success();
+    }
+    @PutMapping("/msg/recall")
+    @ApiOperation("撤回消息")
+//    @FrequencyControl(time = 20, count = 3, target = FrequencyControl.Target.UID)
+    public ApiResult<Void> recallMsg(@Valid @RequestBody ChatMessageBaseReq request) {
+        chatService.recallMsg(RequestHolder.get().getUid(), request);
+        return ApiResult.success();
+    }
+
+    @GetMapping("/msg/read/page")
+    @ApiOperation("消息的已读未读用户列表")
+    public ApiResult<CursorPageBaseResp<ChatMessageReadResp>> getReadPage(@Valid ChatMessageReadReq request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(chatService.getReadPage(uid, request));
     }
 }
 

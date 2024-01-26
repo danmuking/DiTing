@@ -20,7 +20,7 @@ import java.util.Map;
 @Data
 @Builder
 @AllArgsConstructor
-//@NoArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageExtra implements Serializable {
@@ -28,8 +28,8 @@ public class MessageExtra implements Serializable {
 //    TODO:
 //    //url跳转链接
 //    private Map<String, UrlInfo> urlContentMap;
-//    //消息撤回详情
-//    private MsgRecall recall;
+    //消息撤回详情
+    private MsgRecall recall;
 //    //艾特的uid
 //    private List<Long> atUidList;
 //    //文件消息
