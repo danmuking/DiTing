@@ -1,6 +1,7 @@
 package com.linyi.chat.controller;
 
 
+import com.linyi.chat.domain.vo.request.IdReqVO;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
 import com.linyi.chat.service.RoomAppService;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
@@ -40,6 +41,12 @@ public class ContactController {
     public ApiResult<CursorPageBaseResp<ChatRoomResp>> getRoomPage(@Valid CursorPageBaseReq request) {
         Long uid = RequestHolder.get().getUid();
         return ApiResult.success(roomService.getContactPage(request, uid));
+    }
+    @GetMapping("/public/contact/detail")
+    @ApiOperation("会话详情")
+    public ApiResult<ChatRoomResp> getContactDetail(@Valid IdReqVO request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(roomService.getContactDetail(uid, request.getId()));
     }
 }
 

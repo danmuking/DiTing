@@ -19,4 +19,13 @@ public interface RoomAppService {
      * @date 2024/1/26 22:29
      */
     CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid);
+
+    /**
+     * @param uid:
+     * @param roomId:
+     * @return ChatRoomResp
+     * @description 获取会话详情
+     * @date 2024/1/27 14:35
+     */
+    ChatRoomResp getContactDetail(Long uid, long roomId);
 }

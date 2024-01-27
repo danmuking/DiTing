@@ -16,6 +16,7 @@ import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
 import com.linyi.common.domain.enums.RoomTypeEnum;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
+import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.RoomDao;
 import com.linyi.user.dao.RoomFriendDao;
 import com.linyi.user.dao.UserDao;
@@ -82,6 +83,18 @@ public class RoomAppServiceImpl implements RoomAppService {
 //         最后组装会话信息（名称，头像，未读数等）
         List<ChatRoomResp> result = buildContactResp(uid, page.getList());
         return CursorPageBaseResp.init(page, result);
+    }
+
+    /**
+     * @param uid
+     * @param roomId
+     * @return
+     */
+    @Override
+    public ChatRoomResp getContactDetail(Long uid, long roomId) {
+        Room room = roomDao.getById(roomId);
+        AssertUtil.isNotEmpty(room, "房间号有误");
+        return buildContactResp(uid, Collections.singletonList(roomId)).get(0);
     }
 
     /**
