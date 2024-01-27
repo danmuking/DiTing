@@ -24,8 +24,17 @@ public interface RoomAppService {
      * @param uid:
      * @param roomId:
      * @return ChatRoomResp
-     * @description 获取会话详情
+     * @description 获取群聊会话详情
      * @date 2024/1/27 14:35
      */
     ChatRoomResp getContactDetail(Long uid, long roomId);
+
+    /**
+     * @param uid:
+     * @param uid1:
+     * @return Object
+     * @description 获取单聊会话详情
+     * @date 2024/1/27 14:41
+     */
+    ChatRoomResp getContactDetailByFriend(Long uid, Long uid1);
 }

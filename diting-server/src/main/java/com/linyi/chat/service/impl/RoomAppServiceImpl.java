@@ -23,6 +23,7 @@ import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.entity.Room;
 import com.linyi.user.domain.entity.RoomFriend;
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.service.RoomService;
 import com.linyi.user.service.adapter.ChatAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,8 @@ public class RoomAppServiceImpl implements RoomAppService {
     private RoomDao roomDao;
     @Autowired
     private RoomFriendDao roomFriendDao;
+    @Autowired
+    private RoomService roomService;
     @Override
     public CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid) {
         CursorPageBaseResp<Long> page;
@@ -95,6 +98,13 @@ public class RoomAppServiceImpl implements RoomAppService {
         Room room = roomDao.getById(roomId);
         AssertUtil.isNotEmpty(room, "房间号有误");
         return buildContactResp(uid, Collections.singletonList(roomId)).get(0);
+    }
+
+    @Override
+    public ChatRoomResp getContactDetailByFriend(Long uid, Long friendUid) {
+        RoomFriend friendRoom = roomService.getFriendRoom(uid, friendUid);
+        AssertUtil.isNotEmpty(friendRoom, "他不是您的好友");
+        return buildContactResp(uid, Collections.singletonList(friendRoom.getRoomId())).get(0);
     }
 
     /**
@@ -169,13 +179,21 @@ public class RoomAppServiceImpl implements RoomAppService {
         Map<Integer, List<Long>> groupRoomIdMap = roomMap.values().stream().collect(Collectors.groupingBy(Room::getType,
                 Collectors.mapping(Room::getId, Collectors.toList())));
 //         获取群组信息
-        List<Long> groupRoomId = groupRoomIdMap.get(RoomTypeEnum.GROUP.getType());
-        List<RoomGroup> batchById = roomGroupDao.getBatchById(groupRoomId);
-        Map<Long, RoomGroup> roomInfoBatch = batchById.stream().collect(Collectors.toMap(RoomGroup::getId, Function.identity()));
+        Map<Long, RoomGroup> roomInfoBatch = null;
+        if(Objects.nonNull(groupRoomIdMap.get(RoomTypeEnum.GROUP.getType()))){
+            List<Long> groupRoomId = groupRoomIdMap.get(RoomTypeEnum.GROUP.getType());
+            List<RoomGroup> batchById = roomGroupDao.getBatchById(groupRoomId);
+            roomInfoBatch = Optional.ofNullable(batchById).orElse(new ArrayList<>()).stream().collect(Collectors.toMap(RoomGroup::getId, Function.identity()));
+        }
 //         获取单聊信息
-        List<Long> friendRoomId = groupRoomIdMap.get(RoomTypeEnum.FRIEND.getType());
-        Map<Long, User> friendRoomMap = getFriendRoomMap(friendRoomId, uid);
+        Map<Long, User> friendRoomMap = null;
+        if(Objects.nonNull(groupRoomIdMap.get(RoomTypeEnum.FRIEND.getType()))){
+            List<Long> friendRoomId = groupRoomIdMap.get(RoomTypeEnum.FRIEND.getType());
+            friendRoomMap = getFriendRoomMap(friendRoomId, uid);
+        }
 
+        Map<Long, RoomGroup> finalRoomInfoBatch = roomInfoBatch;
+        Map<Long, User> finalfriendRoomMap = friendRoomMap;
         return roomMap.values().stream().map(room -> {
             RoomBaseInfo roomBaseInfo = new RoomBaseInfo();
             roomBaseInfo.setRoomId(room.getId());
@@ -185,13 +203,13 @@ public class RoomAppServiceImpl implements RoomAppService {
             roomBaseInfo.setActiveTime(room.getActiveTime());
 //            群聊设置群聊名称和头像
             if (RoomTypeEnum.of(room.getType()) == RoomTypeEnum.GROUP) {
-                RoomGroup roomGroup = roomInfoBatch.get(room.getId());
+                RoomGroup roomGroup = finalRoomInfoBatch.get(room.getId());
                 roomBaseInfo.setName(roomGroup.getName());
                 roomBaseInfo.setAvatar(roomGroup.getAvatar());
             }
 //            单聊设置好友名称和头像
             else if (RoomTypeEnum.of(room.getType()) == RoomTypeEnum.FRIEND) {
-                User user = friendRoomMap.get(room.getId());
+                User user = finalfriendRoomMap.get(room.getId());
                 roomBaseInfo.setName(user.getName());
                 roomBaseInfo.setAvatar(user.getAvatar());
             }
@@ -205,7 +223,7 @@ public class RoomAppServiceImpl implements RoomAppService {
         }
 //        查询单聊房间信息
         List<RoomFriend> batchByIds = roomFriendDao.getBatchByIds(roomIds);
-        Map<Long, RoomFriend> roomFriendMap = batchByIds.stream().collect(Collectors.toMap(RoomFriend::getRoomId, Function.identity()));
+        Map<Long, RoomFriend> roomFriendMap = Optional.ofNullable(batchByIds).orElse(new ArrayList<>()).stream().collect(Collectors.toMap(RoomFriend::getRoomId, Function.identity()));
 //        获取好友uid
         Set<Long> friendUidSet = ChatAdapter.getFriendUidSet(roomFriendMap.values(), uid);
 //        查询好友信息

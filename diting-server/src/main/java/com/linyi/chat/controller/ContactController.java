@@ -1,6 +1,7 @@
 package com.linyi.chat.controller;
 
 
+import com.linyi.chat.domain.vo.request.ContactFriendReq;
 import com.linyi.chat.domain.vo.request.IdReqVO;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
 import com.linyi.chat.service.RoomAppService;
@@ -47,6 +48,12 @@ public class ContactController {
     public ApiResult<ChatRoomResp> getContactDetail(@Valid IdReqVO request) {
         Long uid = RequestHolder.get().getUid();
         return ApiResult.success(roomService.getContactDetail(uid, request.getId()));
+    }
+    @GetMapping("/public/contact/detail/friend")
+    @ApiOperation("会话详情(联系人列表发消息用)")
+    public ApiResult<ChatRoomResp> getContactDetailByFriend(@Valid ContactFriendReq request) {
+        Long uid = RequestHolder.get().getUid();
+        return ApiResult.success(roomService.getContactDetailByFriend(uid, request.getUid()));
     }
 }
 

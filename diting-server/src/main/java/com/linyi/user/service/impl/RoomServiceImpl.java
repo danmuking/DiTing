@@ -89,6 +89,12 @@ public class RoomServiceImpl implements RoomService {
 
     }
 
+    @Override
+    public RoomFriend getFriendRoom(Long uid, Long friendUid) {
+        String key = RoomAdapter.generateRoomKey(Arrays.asList(uid, friendUid));
+        return roomFriendDao.getByKey(key);
+    }
+
     /**
      * @param roomId:
      * @param uidList:

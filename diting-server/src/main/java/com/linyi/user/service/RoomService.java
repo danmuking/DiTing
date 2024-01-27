@@ -29,5 +29,12 @@ public interface RoomService {
      */
     void disableFriendRoom(List<Long> list);
 
-
+    /**
+     * @param uid:
+     * @param friendUid:
+     * @return RoomFriend
+     * @description 获取单聊房间
+     * @date 2024/1/27 14:43
+     */
+    RoomFriend getFriendRoom(Long uid, Long friendUid);
 }
