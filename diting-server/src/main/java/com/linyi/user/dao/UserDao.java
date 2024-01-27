@@ -20,6 +20,7 @@ import java.util.List;
  */
 @Service
 public class UserDao extends ServiceImpl<UserMapper, User> {
+
     /**
      * @param openId:
      * @return User
@@ -65,6 +66,12 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
         return lambdaQuery()
                 .in(User::getId, friendUids)
                 .select(User::getId, User::getActiveStatus, User::getName, User::getAvatar)
+                .list();
+    }
+
+    public List<User> getBatchByIds(List<Long> collect) {
+        return lambdaQuery()
+                .in(User::getId, collect)
                 .list();
     }
 }

@@ -10,6 +10,7 @@ import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -44,6 +45,13 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                 .eq(Message::getRoomId, roomId)
                 .gt(Message::getId, replyMsgId)
                 .le(Message::getId, id)
+                .count();
+    }
+
+    public Integer getUnReadCount(Long roomId, Date readTime) {
+        return lambdaQuery()
+                .eq(Message::getRoomId, roomId)
+                .gt(Objects.nonNull(readTime), Message::getCreateTime, readTime)
                 .count();
     }
 }

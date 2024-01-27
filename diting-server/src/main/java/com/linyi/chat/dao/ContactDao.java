@@ -10,6 +10,8 @@ import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 会话列表 服务实现类
@@ -62,5 +64,12 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact>{
         return CursorUtils.getCursorPageByMysql(this, request, wrapper -> {
             wrapper.eq(Contact::getUid, uid);
         }, Contact::getActiveTime);
+    }
+
+    public List<Contact> getByRoomIds(List<Long> roomIds, Long uid) {
+        return lambdaQuery()
+                .in(Contact::getRoomId, roomIds)
+                .eq(Contact::getUid, uid)
+                .list();
     }
 }

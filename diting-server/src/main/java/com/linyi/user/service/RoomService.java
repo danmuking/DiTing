@@ -29,12 +29,5 @@ public interface RoomService {
      */
     void disableFriendRoom(List<Long> list);
 
-    /**
-     * @param request:
-     * @param uid:
-     * @return CursorPageBaseResp<ChatRoomResp>
-     * @description 获取会话列表
-     * @date 2024/1/26 22:29
-     */
-    CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid);
+
 }

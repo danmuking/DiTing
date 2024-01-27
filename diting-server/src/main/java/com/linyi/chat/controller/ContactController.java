@@ -2,6 +2,7 @@ package com.linyi.chat.controller;
 
 
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
+import com.linyi.chat.service.RoomAppService;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
@@ -33,7 +34,7 @@ import javax.validation.Valid;
 @Slf4j
 public class ContactController {
     @Autowired
-    RoomService roomService;
+    RoomAppService roomService;
     @GetMapping("/public/contact/page")
     @ApiOperation("会话列表")
     public ApiResult<CursorPageBaseResp<ChatRoomResp>> getRoomPage(@Valid CursorPageBaseReq request) {
