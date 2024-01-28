@@ -2,12 +2,14 @@ package com.linyi.chat.service;
 
 import com.linyi.chat.domain.dto.MsgReadInfoDTO;
 import com.linyi.chat.domain.vo.request.*;
+import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @program: DiTing
@@ -80,4 +82,6 @@ public interface ChatService {
      * @date 2024/1/26 19:59
      */
     void msgRead(Long uid, ChatMessageMemberReq request);
+
+    CursorPageBaseResp<ChatMemberResp> getMemberPage(List<Long> memberUidList, MemberReq request);
 }

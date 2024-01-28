@@ -2,7 +2,11 @@ package com.linyi.user.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.linyi.common.domain.vo.request.CursorPageBaseReq;
+import com.linyi.common.domain.vo.response.CursorPageBaseResp;
+import com.linyi.common.utils.CursorUtils;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.enums.ChatActiveStatusEnum;
 import com.linyi.user.mapper.UserMapper;
@@ -81,5 +85,13 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
                 .in(User::getId, memberUidList)
                 .eq(User::getActiveStatus, ChatActiveStatusEnum.ONLINE.getStatus())
                 .count();
+    }
+
+    public CursorPageBaseResp<User> getCursorPage(List<Long> memberUidList, CursorPageBaseReq request, ChatActiveStatusEnum chatActiveStatusEnum) {
+        return CursorUtils.getCursorPageByMysql(this, request, wrapper -> {
+//            在线或是离线
+            wrapper.eq(User::getActiveStatus, chatActiveStatusEnum.getStatus());
+            wrapper.in(CollectionUtils.isNotEmpty(memberUidList), User::getId, memberUidList);//普通群对uid列表做限制
+        }, User::getLastOptTime);
     }
 }

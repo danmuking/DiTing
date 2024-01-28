@@ -2,11 +2,14 @@ package com.linyi.chat.dao;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyi.chat.domain.entity.GroupMember;
+import com.linyi.chat.domain.enums.GroupRoleAPPEnum;
+import com.linyi.chat.domain.enums.GroupRoleEnum;
 import com.linyi.chat.mapper.GroupMemberMapper;
 import com.linyi.chat.service.IGroupMemberService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -35,5 +38,15 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .stream()
                 .map(GroupMember::getUid)
                 .collect(Collectors.toList());
+    }
+
+    public Map<Long, Integer> getMemberMapRole(Long groupId, List<Long> uidList) {
+        List<GroupMember> list = lambdaQuery()
+                .eq(GroupMember::getGroupId, groupId)
+                .in(GroupMember::getUid, uidList)
+                .in(GroupMember::getRole, GroupRoleEnum.ADMIN_LIST)
+                .select(GroupMember::getUid, GroupMember::getRole)
+                .list();
+        return list.stream().collect(Collectors.toMap(GroupMember::getUid, GroupMember::getRole));
     }
 }

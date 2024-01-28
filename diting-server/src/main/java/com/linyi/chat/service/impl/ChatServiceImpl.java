@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Pair;
 import com.linyi.chat.dao.*;
 import com.linyi.chat.domain.dto.MsgReadInfoDTO;
 import com.linyi.chat.domain.entity.*;
@@ -11,25 +12,32 @@ import com.linyi.chat.domain.enums.MessageMarkActTypeEnum;
 import com.linyi.chat.domain.enums.MessageReadTypeEnum;
 import com.linyi.chat.domain.enums.MessageTypeEnum;
 import com.linyi.chat.domain.vo.request.*;
+import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.ChatService;
 import com.linyi.chat.service.ContactService;
+import com.linyi.chat.service.adapter.MemberAdapter;
 import com.linyi.chat.service.adapter.MessageAdapter;
 import com.linyi.chat.service.adapter.RoomAdapter;
+import com.linyi.chat.service.helper.ChatMemberHelper;
 import com.linyi.chat.service.strategy.mark.AbstractMsgMarkStrategy;
 import com.linyi.chat.service.strategy.mark.MsgMarkFactory;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
 import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
 import com.linyi.chat.service.strategy.msg.RecallMsgHandler;
 import com.linyi.common.domain.enums.NormalOrNoEnum;
+import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.event.MessageSendEvent;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.RoomDao;
 import com.linyi.user.dao.RoomFriendDao;
+import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.entity.Room;
 import com.linyi.user.domain.entity.RoomFriend;
+import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.enums.ChatActiveStatusEnum;
 import com.linyi.user.domain.enums.RoleEnum;
 import com.linyi.user.service.IRoleService;
 import net.sf.jsqlparser.expression.operators.arithmetic.Concat;
@@ -71,6 +79,8 @@ public class ChatServiceImpl implements ChatService {
     private ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     private ContactService contactService;
+    @Autowired
+    private UserDao userDao;
     @Override
     public CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq request, Long uid) {
 //        获取该用户能见的最后一条消息id，防止用户被踢出后能看见之后的消息
@@ -169,6 +179,47 @@ public class ChatServiceImpl implements ChatService {
             insert.setReadTime(new Date());
             contactDao.save(insert);
         }
+    }
+
+    @Override
+    public CursorPageBaseResp<ChatMemberResp> getMemberPage(List<Long> memberUidList, MemberReq request) {
+//        获取用户状态及时间游标
+        Pair<ChatActiveStatusEnum, String> pair = ChatMemberHelper.getCursorPair(request.getCursor());
+        ChatActiveStatusEnum activeStatusEnum = pair.getKey();
+        String timeCursor = pair.getValue();
+//        结果列表
+        List<ChatMemberResp> resultList = new ArrayList<>();
+        Boolean isLast = Boolean.FALSE;
+        if (activeStatusEnum == ChatActiveStatusEnum.ONLINE) {
+//            在线用户页
+            CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(memberUidList, new CursorPageBaseReq(request.getPageSize(), timeCursor), ChatActiveStatusEnum.ONLINE);
+//            添加到结果列表
+            resultList.addAll(MemberAdapter.buildMember(cursorPage.getList()));
+//            如果是最后一页,从离线列表再补点数据
+            if (cursorPage.getIsLast()) {
+                activeStatusEnum = ChatActiveStatusEnum.OFFLINE;
+                Integer leftSize = request.getPageSize() - cursorPage.getList().size();
+                cursorPage = userDao.getCursorPage(memberUidList, new CursorPageBaseReq(leftSize, null), ChatActiveStatusEnum.OFFLINE);
+//                补充离线用户
+                resultList.addAll(MemberAdapter.buildMember(cursorPage.getList()));
+            }
+            timeCursor = cursorPage.getCursor();
+            isLast = cursorPage.getIsLast();
+        }
+//        离线用户列表
+        else if (activeStatusEnum == ChatActiveStatusEnum.OFFLINE) {
+            CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(memberUidList, new CursorPageBaseReq(request.getPageSize(), timeCursor), ChatActiveStatusEnum.OFFLINE);
+//            添加离线用户
+            resultList.addAll(MemberAdapter.buildMember(cursorPage.getList()));
+            timeCursor = cursorPage.getCursor();
+            isLast = cursorPage.getIsLast();
+        }
+//        获取用户角色
+        List<Long> uidList = resultList.stream().map(ChatMemberResp::getUid).collect(Collectors.toList());
+        RoomGroup roomGroup = roomGroupDao.getByRoomId(request.getRoomId());
+        Map<Long, Integer> uidMapRole = groupMemberDao.getMemberMapRole(roomGroup.getId(), uidList);
+        resultList.forEach(member -> member.setRoleId(uidMapRole.get(member.getUid())));
+        return new CursorPageBaseResp<>(ChatMemberHelper.generateCursor(activeStatusEnum, timeCursor), isLast, resultList);
     }
 
     private void checkRecall(Long uid, Message message) {

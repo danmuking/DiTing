@@ -12,8 +12,11 @@ import com.linyi.chat.domain.entity.GroupMember;
 import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.entity.RoomGroup;
 import com.linyi.chat.domain.enums.GroupRoleAPPEnum;
+import com.linyi.chat.domain.vo.request.MemberReq;
+import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
 import com.linyi.chat.domain.vo.response.MemberResp;
+import com.linyi.chat.service.ChatService;
 import com.linyi.chat.service.RoomAppService;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
 import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
@@ -61,6 +64,8 @@ public class RoomAppServiceImpl implements RoomAppService {
     private RoomService roomService;
     @Autowired
     private GroupMemberDao groupMemberDao;
+    @Autowired
+    private ChatService chatService;
     @Override
     public CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid) {
         CursorPageBaseResp<Long> page;
@@ -133,6 +138,21 @@ public class RoomAppServiceImpl implements RoomAppService {
                 .onlineNum(onlineNum)
                 .role(groupRole.getType())
                 .build();
+    }
+
+    @Override
+    public CursorPageBaseResp<ChatMemberResp> getMemberPage(MemberReq request) {
+        Room room = roomDao.getById(request.getRoomId());
+        AssertUtil.isNotEmpty(room, "房间号有误");
+        List<Long> memberUidList;
+        if (isHotGroup(room)) {// 全员群展示所有用户
+            memberUidList = null;
+        }
+        else {// 只展示房间内的群成员
+            RoomGroup roomGroup = roomGroupDao.getByRoomId(request.getRoomId());
+            memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
+        }
+        return chatService.getMemberPage(memberUidList, request);
     }
 
     /**

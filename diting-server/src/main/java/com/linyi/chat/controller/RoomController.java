@@ -1,9 +1,12 @@
 package com.linyi.chat.controller;
 
 import com.linyi.chat.domain.vo.request.IdReqVO;
+import com.linyi.chat.domain.vo.request.MemberReq;
+import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.chat.domain.vo.response.MemberResp;
 import com.linyi.chat.service.RoomAppService;
 import com.linyi.common.domain.vo.response.ApiResult;
+import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.RequestHolder;
 import com.linyi.user.service.RoomService;
 import io.swagger.annotations.Api;
@@ -34,5 +37,11 @@ public class RoomController{
     public ApiResult<MemberResp> groupDetail(@Valid IdReqVO request) {
         Long uid = RequestHolder.get().getUid();
         return ApiResult.success(roomService.getGroupDetail(uid, request.getId()));
+    }
+
+    @GetMapping("/public/group/member/page")
+    @ApiOperation("群成员列表")
+    public ApiResult<CursorPageBaseResp<ChatMemberResp>> getMemberPage(@Valid MemberReq request) {
+        return ApiResult.success(roomService.getMemberPage(request));
     }
 }

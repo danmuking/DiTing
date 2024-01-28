@@ -1,5 +1,7 @@
 package com.linyi.chat.service;
 
+import com.linyi.chat.domain.vo.request.MemberReq;
+import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
 import com.linyi.chat.domain.vo.response.MemberResp;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
@@ -47,4 +49,6 @@ public interface RoomAppService {
      * @date 2024/1/28 21:10
      */
     MemberResp getGroupDetail(Long uid, long id);
+
+    CursorPageBaseResp<ChatMemberResp> getMemberPage(MemberReq request);
 }
