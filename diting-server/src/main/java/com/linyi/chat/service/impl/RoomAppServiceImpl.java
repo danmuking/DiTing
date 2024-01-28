@@ -3,13 +3,17 @@ package com.linyi.chat.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Pair;
 import com.linyi.chat.dao.ContactDao;
+import com.linyi.chat.dao.GroupMemberDao;
 import com.linyi.chat.dao.MessageDao;
 import com.linyi.chat.dao.RoomGroupDao;
 import com.linyi.chat.domain.dto.RoomBaseInfo;
 import com.linyi.chat.domain.entity.Contact;
+import com.linyi.chat.domain.entity.GroupMember;
 import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.entity.RoomGroup;
+import com.linyi.chat.domain.enums.GroupRoleAPPEnum;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
+import com.linyi.chat.domain.vo.response.MemberResp;
 import com.linyi.chat.service.RoomAppService;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
 import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
@@ -23,6 +27,7 @@ import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.entity.Room;
 import com.linyi.user.domain.entity.RoomFriend;
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.enums.HotFlagEnum;
 import com.linyi.user.service.RoomService;
 import com.linyi.user.service.adapter.ChatAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +59,8 @@ public class RoomAppServiceImpl implements RoomAppService {
     private RoomFriendDao roomFriendDao;
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private GroupMemberDao groupMemberDao;
     @Override
     public CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid) {
         CursorPageBaseResp<Long> page;
@@ -105,6 +112,55 @@ public class RoomAppServiceImpl implements RoomAppService {
         RoomFriend friendRoom = roomService.getFriendRoom(uid, friendUid);
         AssertUtil.isNotEmpty(friendRoom, "他不是您的好友");
         return buildContactResp(uid, Collections.singletonList(friendRoom.getRoomId())).get(0);
+    }
+
+    @Override
+    public MemberResp getGroupDetail(Long uid, long roomId) {
+        RoomGroup roomGroup = roomGroupDao.getByRoomId(roomId);
+        Room room = roomDao.getById(roomId);
+        AssertUtil.isNotEmpty(roomGroup, "roomId有误");
+//        TODO:热点群缓存
+//        拉取在线人数
+        Long onlineNum;
+        List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
+        onlineNum = userDao.getOnlineCount(memberUidList).longValue();
+//        拉取用户角色
+        GroupRoleAPPEnum groupRole = getGroupRole(uid, roomGroup, room);
+        return MemberResp.builder()
+                .avatar(roomGroup.getAvatar())
+                .roomId(roomId)
+                .groupName(roomGroup.getName())
+                .onlineNum(onlineNum)
+                .role(groupRole.getType())
+                .build();
+    }
+
+    /**
+     * @param uid:
+     * @param roomGroup:
+     * @param room:
+     * @return GroupRoleAPPEnum
+     * @description 获取用户群聊角色
+     * @date 2024/1/28 21:24
+     */
+    private GroupRoleAPPEnum getGroupRole(Long uid, RoomGroup roomGroup, Room room) {
+        GroupMember member = Objects.isNull(uid) ? null : groupMemberDao.getMember(roomGroup.getId(), uid);
+//        拉取用户在群聊中的角色
+        if (Objects.nonNull(member)) {
+            return GroupRoleAPPEnum.of(member.getRole());
+        }
+//       热点群聊，没有设计就是成员
+        else if (isHotGroup(room)) {
+            return GroupRoleAPPEnum.MEMBER;
+        }
+//        否则就是被移除
+        else {
+            return GroupRoleAPPEnum.REMOVE;
+        }
+    }
+
+    private boolean isHotGroup(Room room) {
+        return HotFlagEnum.YES.getType().equals(room.getHotFlag());
     }
 
     /**

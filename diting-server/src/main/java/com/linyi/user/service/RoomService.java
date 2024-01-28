@@ -1,6 +1,7 @@
 package com.linyi.user.service;
 
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
+import com.linyi.chat.domain.vo.response.MemberResp;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.user.domain.entity.Room;
@@ -37,4 +38,6 @@ public interface RoomService {
      * @date 2024/1/27 14:43
      */
     RoomFriend getFriendRoom(Long uid, Long friendUid);
+
+
 }

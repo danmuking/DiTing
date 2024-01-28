@@ -10,6 +10,7 @@ import com.linyi.chat.domain.entity.Contact;
 import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.entity.RoomGroup;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
+import com.linyi.chat.domain.vo.response.MemberResp;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
 import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
 import com.linyi.common.domain.enums.NormalOrNoEnum;

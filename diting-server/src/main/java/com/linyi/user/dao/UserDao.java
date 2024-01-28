@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.enums.ChatActiveStatusEnum;
 import com.linyi.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
@@ -73,5 +74,12 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
         return lambdaQuery()
                 .in(User::getId, collect)
                 .list();
+    }
+
+    public Integer getOnlineCount(List<Long> memberUidList) {
+        return lambdaQuery()
+                .in(User::getId, memberUidList)
+                .eq(User::getActiveStatus, ChatActiveStatusEnum.ONLINE.getStatus())
+                .count();
     }
 }
