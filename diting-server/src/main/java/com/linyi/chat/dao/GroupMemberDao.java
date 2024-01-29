@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyi.chat.domain.entity.GroupMember;
 import com.linyi.chat.domain.enums.GroupRoleEnum;
@@ -107,5 +109,23 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .select(GroupMember::getUid)
                 .list();
         return list.stream().map(GroupMember::getUid).collect(Collectors.toList());
+    }
+
+    public List<Long> getManageUidList(Long id) {
+        return this.lambdaQuery()
+                .eq(GroupMember::getGroupId, id)
+                .eq(GroupMember::getRole, GroupRoleEnum.MANAGER.getType())
+                .list()
+                .stream()
+                .map(GroupMember::getUid)
+                .collect(Collectors.toList());
+    }
+
+    public void addAdmin(Long id, List<Long> uidList) {
+        LambdaUpdateWrapper<GroupMember> wrapper = new UpdateWrapper<GroupMember>().lambda()
+                .eq(GroupMember::getGroupId, id)
+                .in(GroupMember::getUid, uidList)
+                .set(GroupMember::getRole, GroupRoleEnum.MANAGER.getType());
+        this.update(wrapper);
     }
 }

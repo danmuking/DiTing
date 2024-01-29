@@ -85,4 +85,12 @@ public class RoomController{
         roomService.addMember(uid, request);
         return ApiResult.success();
     }
+
+    @PutMapping("/group/admin")
+    @ApiOperation("添加管理员")
+    public ApiResult<Boolean> addAdmin(@Valid @RequestBody AdminAddReq request) {
+        Long uid = RequestHolder.get().getUid();
+        groupMemberService.addAdmin(uid, request);
+        return ApiResult.success();
+    }
 }
