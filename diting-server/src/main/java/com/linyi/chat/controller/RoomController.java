@@ -77,4 +77,12 @@ public class RoomController{
         Long roomId = roomService.addGroup(uid, request);
         return ApiResult.success(IdRespVO.id(roomId));
     }
+
+    @PostMapping("/group/member")
+    @ApiOperation("邀请好友")
+    public ApiResult<Void> addMember(@Valid @RequestBody MemberAddReq request) {
+        Long uid = RequestHolder.get().getUid();
+        roomService.addMember(uid, request);
+        return ApiResult.success();
+    }
 }

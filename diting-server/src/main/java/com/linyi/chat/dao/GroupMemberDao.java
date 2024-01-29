@@ -99,4 +99,13 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .eq(GroupMember::getRole, GroupRoleEnum.LEADER.getType())
                 .list();
     }
+
+    public List<Long> getMemberBatch(Long groupId, List<Long> uidList) {
+        List<GroupMember> list = lambdaQuery()
+                .eq(GroupMember::getGroupId, groupId)
+                .in(GroupMember::getUid, uidList)
+                .select(GroupMember::getUid)
+                .list();
+        return list.stream().map(GroupMember::getUid).collect(Collectors.toList());
+    }
 }

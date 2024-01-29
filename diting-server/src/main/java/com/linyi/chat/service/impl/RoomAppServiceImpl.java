@@ -13,10 +13,7 @@ import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.entity.RoomGroup;
 import com.linyi.chat.domain.enums.GroupRoleAPPEnum;
 import com.linyi.chat.domain.enums.GroupRoleEnum;
-import com.linyi.chat.domain.vo.request.ChatMessageMemberReq;
-import com.linyi.chat.domain.vo.request.GroupAddReq;
-import com.linyi.chat.domain.vo.request.MemberDelReq;
-import com.linyi.chat.domain.vo.request.MemberReq;
+import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMemberListResp;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
@@ -50,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -235,6 +233,29 @@ public class RoomAppServiceImpl implements RoomAppService {
         // 发送邀请加群消息==》触发每个人的会话
         applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, roomGroup, groupMembers, uid));
         return roomGroup.getRoomId();
+    }
+
+    @Override
+    public void addMember(Long uid, MemberAddReq request) {
+//        获取房间信息
+        Room room = roomDao.getById(request.getRoomId());
+        AssertUtil.isNotEmpty(room, "房间号有误");
+        AssertUtil.isFalse(isHotGroup(room), "全员群无需邀请好友");
+//        获取群组信息
+        RoomGroup roomGroup = roomGroupDao.getByRoomId(request.getRoomId());
+        AssertUtil.isNotEmpty(roomGroup, "房间号有误");
+        GroupMember self = groupMemberDao.getMember(roomGroup.getId(), uid);
+        AssertUtil.isNotEmpty(self, "您不是群成员");
+//        批量添加群成员，已经存在的不用添加
+        List<Long> memberBatch = groupMemberDao.getMemberBatch(roomGroup.getId(), request.getUidList());
+        Set<Long> existUid = new HashSet<>(memberBatch);
+        List<Long> waitAddUidList = request.getUidList().stream().filter(a -> !existUid.contains(a)).distinct().collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(waitAddUidList)) {
+            return;
+        }
+        List<GroupMember> groupMembers = MemberAdapter.buildMemberAdd(roomGroup.getId(), waitAddUidList);
+        groupMemberDao.saveBatch(groupMembers);
+        applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, roomGroup, groupMembers, uid));
     }
 
     private boolean hasPower(GroupMember self) {

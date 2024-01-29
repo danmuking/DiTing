@@ -1,5 +1,7 @@
 package com.linyi.chat.service.adapter;
 
+import com.linyi.chat.domain.entity.GroupMember;
+import com.linyi.chat.domain.enums.GroupRoleEnum;
 import com.linyi.chat.domain.vo.response.ChatMemberListResp;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.user.domain.entity.User;
@@ -49,5 +51,15 @@ public class MemberAdapter {
         wsMemberChange.setChangeType(CHANGE_TYPE_REMOVE);
         wsBaseResp.setData(wsMemberChange);
         return wsBaseResp;
+    }
+
+    public static List<GroupMember> buildMemberAdd(Long groupId, List<Long> waitAddUidList) {
+        return waitAddUidList.stream().map(a -> {
+            GroupMember member = new GroupMember();
+            member.setGroupId(groupId);
+            member.setUid(a);
+            member.setRole(GroupRoleEnum.MEMBER.getType());
+            return member;
+        }).collect(Collectors.toList());
     }
 }

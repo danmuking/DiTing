@@ -1,9 +1,6 @@
 package com.linyi.chat.service;
 
-import com.linyi.chat.domain.vo.request.ChatMessageMemberReq;
-import com.linyi.chat.domain.vo.request.GroupAddReq;
-import com.linyi.chat.domain.vo.request.MemberDelReq;
-import com.linyi.chat.domain.vo.request.MemberReq;
+import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMemberListResp;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
@@ -83,4 +80,6 @@ public interface RoomAppService {
      * @date 2024/1/29 19:24
      */
     Long addGroup(Long uid, GroupAddReq request);
+
+    void addMember(Long uid, MemberAddReq request);
 }
