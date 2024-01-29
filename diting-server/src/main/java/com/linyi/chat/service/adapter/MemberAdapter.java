@@ -3,10 +3,15 @@ package com.linyi.chat.service.adapter;
 import com.linyi.chat.domain.vo.response.ChatMemberListResp;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.enums.WSRespTypeEnum;
+import com.linyi.user.domain.vo.request.user.WSMemberChange;
+import com.linyi.user.domain.vo.response.ws.WSBaseResp;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.linyi.user.domain.vo.request.user.WSMemberChange.CHANGE_TYPE_REMOVE;
 
 /**
  * @program: DiTing
@@ -33,5 +38,16 @@ public class MemberAdapter {
                     resp.setUid(a.getId());
                     return resp;
                 }).collect(Collectors.toList());
+    }
+
+    public static WSBaseResp<WSMemberChange> buildMemberRemoveWS(Long roomId, Long uid) {
+        WSBaseResp<WSMemberChange> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.MEMBER_CHANGE.getType());
+        WSMemberChange wsMemberChange = new WSMemberChange();
+        wsMemberChange.setUid(uid);
+        wsMemberChange.setRoomId(roomId);
+        wsMemberChange.setChangeType(CHANGE_TYPE_REMOVE);
+        wsBaseResp.setData(wsMemberChange);
+        return wsBaseResp;
     }
 }

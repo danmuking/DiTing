@@ -1,5 +1,6 @@
 package com.linyi.chat.controller;
 
+import com.linyi.chat.domain.vo.request.MemberDelReq;
 import com.linyi.chat.domain.vo.response.ChatMemberListResp;
 import com.linyi.chat.domain.vo.request.ChatMessageMemberReq;
 import com.linyi.chat.domain.vo.request.IdReqVO;
@@ -14,9 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -51,5 +50,13 @@ public class RoomController{
     @ApiOperation("房间内的所有群成员列表-@专用")
     public ApiResult<List<ChatMemberListResp>> getMemberList(@Valid ChatMessageMemberReq request) {
         return ApiResult.success(roomService.getMemberList(request));
+    }
+
+    @DeleteMapping("/group/member")
+    @ApiOperation("移除成员")
+    public ApiResult<Void> delMember(@Valid @RequestBody MemberDelReq request) {
+        Long uid = RequestHolder.get().getUid();
+        roomService.delMember(uid, request);
+        return ApiResult.success();
     }
 }

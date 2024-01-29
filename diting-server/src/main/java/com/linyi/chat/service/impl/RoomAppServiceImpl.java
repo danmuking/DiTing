@@ -12,7 +12,9 @@ import com.linyi.chat.domain.entity.GroupMember;
 import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.entity.RoomGroup;
 import com.linyi.chat.domain.enums.GroupRoleAPPEnum;
+import com.linyi.chat.domain.enums.GroupRoleEnum;
 import com.linyi.chat.domain.vo.request.ChatMessageMemberReq;
+import com.linyi.chat.domain.vo.request.MemberDelReq;
 import com.linyi.chat.domain.vo.request.MemberReq;
 import com.linyi.chat.domain.vo.response.ChatMemberListResp;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
@@ -26,6 +28,7 @@ import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
 import com.linyi.common.domain.enums.RoomTypeEnum;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
+import com.linyi.common.exception.GroupErrorEnum;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.RoomDao;
 import com.linyi.user.dao.RoomFriendDao;
@@ -34,6 +37,10 @@ import com.linyi.user.domain.entity.Room;
 import com.linyi.user.domain.entity.RoomFriend;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.enums.HotFlagEnum;
+import com.linyi.user.domain.enums.RoleEnum;
+import com.linyi.user.domain.vo.request.user.WSMemberChange;
+import com.linyi.user.domain.vo.response.ws.WSBaseResp;
+import com.linyi.user.service.IRoleService;
 import com.linyi.user.service.RoomService;
 import com.linyi.user.service.adapter.ChatAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +76,8 @@ public class RoomAppServiceImpl implements RoomAppService {
     private GroupMemberDao groupMemberDao;
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private IRoleService iRoleService;
     @Override
     public CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid) {
         CursorPageBaseResp<Long> page;
@@ -175,6 +184,44 @@ public class RoomAppServiceImpl implements RoomAppService {
             List<User> users = userDao.getBatchByIds(memberUidList);
             return MemberAdapter.buildMemberList(users);
         }
+    }
+
+    @Override
+    public void delMember(Long uid, MemberDelReq request) {
+//        获取房间信息
+        Room room = roomDao.getById(request.getRoomId());
+        AssertUtil.isNotEmpty(room, "房间号有误");
+//        获取群聊信息
+        RoomGroup roomGroup = roomGroupDao.getByRoomId(request.getRoomId());
+        AssertUtil.isNotEmpty(roomGroup, "房间号有误");
+//        获取用户信息
+        GroupMember self = groupMemberDao.getMember(roomGroup.getId(), uid);
+//        用户不存在，报错
+        AssertUtil.isNotEmpty(self, GroupErrorEnum.USER_NOT_IN_GROUP);
+//        权限校验
+//        1. 判断被移除的人是否是群主或者管理员  （群主不可以被移除，管理员只能被群主移除）
+        Long removedUid = request.getUid();
+//        1.1 群主 非法操作
+        AssertUtil.isFalse(groupMemberDao.isLord(roomGroup.getId(), removedUid), GroupErrorEnum.NOT_ALLOWED_FOR_REMOVE);
+//        1.2 管理员 判断是否是群主操作
+        if (groupMemberDao.isManager(roomGroup.getId(), removedUid)) {
+            Boolean isLord = groupMemberDao.isLord(roomGroup.getId(), uid);
+            AssertUtil.isTrue(isLord, GroupErrorEnum.NOT_ALLOWED_FOR_REMOVE);
+        }
+//         1.3 普通成员 判断是否有权限操作
+        AssertUtil.isTrue(hasPower(self), GroupErrorEnum.NOT_ALLOWED_FOR_REMOVE);
+        GroupMember member = groupMemberDao.getMember(roomGroup.getId(), removedUid);
+        AssertUtil.isNotEmpty(member, "用户已经移除");
+        groupMemberDao.removeById(member.getId());
+//        发送移除事件告知群成员
+        List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getRoomId());
+        WSBaseResp<WSMemberChange> ws = MemberAdapter.buildMemberRemoveWS(roomGroup.getRoomId(), member.getUid());
+//        pushService.sendPushMsg(ws, memberUidList);
+    }
+
+    private boolean hasPower(GroupMember self) {
+//        群主和管理员有权限，超级管理员也有权限
+        return GroupRoleEnum.ADMIN_LIST.contains(self.getRole())|| iRoleService.hasPower(self.getUid(), RoleEnum.ADMIN);
     }
 
     /**

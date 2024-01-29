@@ -1,5 +1,6 @@
 package com.linyi.chat.dao;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyi.chat.domain.entity.GroupMember;
 import com.linyi.chat.domain.enums.GroupRoleAPPEnum;
@@ -48,5 +49,23 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .select(GroupMember::getUid, GroupMember::getRole)
                 .list();
         return list.stream().collect(Collectors.toMap(GroupMember::getUid, GroupMember::getRole));
+    }
+
+    public Boolean isLord(Long groupId, Long removedUid) {
+        GroupMember groupMember = lambdaQuery()
+                .eq(GroupMember::getGroupId, groupId)
+                .eq(GroupMember::getUid, removedUid)
+                .eq(GroupMember::getRole, GroupRoleEnum.LEADER.getType())
+                .one();
+        return ObjectUtil.isNotNull(groupMember);
+    }
+
+    public boolean isManager(Long groupId, Long removedUid) {
+        GroupMember groupMember = lambdaQuery()
+                .eq(GroupMember::getGroupId, groupId)
+                .eq(GroupMember::getUid, removedUid)
+                .in(GroupMember::getRole, GroupRoleEnum.MANAGER)
+                .one();
+        return ObjectUtil.isNotNull(groupMember);
     }
 }

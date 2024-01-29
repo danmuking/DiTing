@@ -1,6 +1,7 @@
 package com.linyi.chat.service;
 
 import com.linyi.chat.domain.vo.request.ChatMessageMemberReq;
+import com.linyi.chat.domain.vo.request.MemberDelReq;
 import com.linyi.chat.domain.vo.request.MemberReq;
 import com.linyi.chat.domain.vo.response.ChatMemberListResp;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
@@ -63,4 +64,13 @@ public interface RoomAppService {
      * @date 2024/1/29 18:18
      */
     List<ChatMemberListResp> getMemberList(ChatMessageMemberReq request);
+
+    /**
+     * @param uid:
+     * @param request:
+     * @return void
+     * @description 移除群成员
+     * @date 2024/1/29 18:32
+     */
+    void delMember(Long uid, MemberDelReq request);
 }
