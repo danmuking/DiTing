@@ -1,7 +1,9 @@
 package com.linyi.chat.service.adapter;
 
+import com.linyi.chat.domain.vo.response.ChatMemberListResp;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.user.domain.entity.User;
+import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,5 +23,15 @@ public class MemberAdapter {
             resp.setUid(a.getId());
             return resp;
         }).collect(Collectors.toList());
+    }
+
+    public static List<ChatMemberListResp> buildMemberList(List<User> memberList) {
+        return memberList.stream()
+                .map(a -> {
+                    ChatMemberListResp resp = new ChatMemberListResp();
+                    BeanUtils.copyProperties(a, resp);
+                    resp.setUid(a.getId());
+                    return resp;
+                }).collect(Collectors.toList());
     }
 }

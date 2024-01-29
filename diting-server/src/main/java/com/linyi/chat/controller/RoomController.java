@@ -1,5 +1,7 @@
 package com.linyi.chat.controller;
 
+import com.linyi.chat.domain.vo.response.ChatMemberListResp;
+import com.linyi.chat.domain.vo.request.ChatMessageMemberReq;
 import com.linyi.chat.domain.vo.request.IdReqVO;
 import com.linyi.chat.domain.vo.request.MemberReq;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
@@ -8,7 +10,6 @@ import com.linyi.chat.service.RoomAppService;
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.RequestHolder;
-import com.linyi.user.service.RoomService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @program: DiTing
@@ -43,5 +45,11 @@ public class RoomController{
     @ApiOperation("群成员列表")
     public ApiResult<CursorPageBaseResp<ChatMemberResp>> getMemberPage(@Valid MemberReq request) {
         return ApiResult.success(roomService.getMemberPage(request));
+    }
+
+    @GetMapping("/group/member/list")
+    @ApiOperation("房间内的所有群成员列表-@专用")
+    public ApiResult<List<ChatMemberListResp>> getMemberList(@Valid ChatMessageMemberReq request) {
+        return ApiResult.success(roomService.getMemberList(request));
     }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.linyi.common.domain.enums.NormalOrNoEnum;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.CursorUtils;
@@ -93,5 +94,14 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
             wrapper.eq(User::getActiveStatus, chatActiveStatusEnum.getStatus());
             wrapper.in(CollectionUtils.isNotEmpty(memberUidList), User::getId, memberUidList);//普通群对uid列表做限制
         }, User::getLastOptTime);
+    }
+
+    public List<User> getMemberList() {
+        return lambdaQuery()
+                .eq(User::getStatus, NormalOrNoEnum.NORMAL.getStatus())
+                .orderByDesc(User::getLastOptTime)//最近活跃的1000个人，可以用lastOptTime字段，但是该字段没索引，updateTime可平替
+                .last("limit 1000")//毕竟是大群聊，人数需要做个限制
+                .select(User::getId, User::getName, User::getAvatar)
+                .list();
     }
 }
