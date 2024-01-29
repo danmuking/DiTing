@@ -1,5 +1,8 @@
 package com.linyi.chat.dao;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyi.chat.domain.enums.MessageStatusEnum;
 import com.linyi.chat.domain.vo.request.ChatMessagePageReq;
@@ -11,6 +14,7 @@ import com.linyi.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -53,5 +57,16 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                 .eq(Message::getRoomId, roomId)
                 .gt(Objects.nonNull(readTime), Message::getCreateTime, readTime)
                 .count();
+    }
+
+    public Boolean removeByRoomId(Long roomId, List uidList) {
+        if (CollectionUtil.isNotEmpty(uidList)) {
+            LambdaUpdateWrapper<Message> wrapper = new UpdateWrapper<Message>().lambda()
+                    .eq(Message::getRoomId, roomId)
+                    .in(Message::getFromUid, uidList)
+                    .set(Message::getStatus, MessageStatusEnum.DELETE.getStatus());
+            return this.update(wrapper);
+        }
+        return false;
     }
 }

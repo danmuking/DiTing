@@ -1,12 +1,13 @@
 package com.linyi.chat.dao;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyi.chat.domain.entity.GroupMember;
-import com.linyi.chat.domain.enums.GroupRoleAPPEnum;
 import com.linyi.chat.domain.enums.GroupRoleEnum;
 import com.linyi.chat.mapper.GroupMemberMapper;
-import com.linyi.chat.service.IGroupMemberService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,5 +68,28 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .in(GroupMember::getRole, GroupRoleEnum.MANAGER)
                 .one();
         return ObjectUtil.isNotNull(groupMember);
+    }
+
+    /**
+     * @param roomId:
+     * @param longs:
+     * @return Boolean
+     * @description 用户是否在群中
+     * @date 2024/1/29 19:01
+     */
+    public Boolean isGroupShip(Long roomId, List<Long> uidList) {
+        List<Long> memberUidList = getMemberUidList(roomId);
+        return memberUidList.containsAll(uidList);
+    }
+
+    public Boolean removeByGroupId(Long groupId, List uidList) {
+        if (CollectionUtil.isNotEmpty(uidList)) {
+            LambdaQueryWrapper<GroupMember> wrapper = new QueryWrapper<GroupMember>()
+                    .lambda()
+                    .eq(GroupMember::getGroupId, groupId)
+                    .in(GroupMember::getUid, uidList);
+            return this.remove(wrapper);
+        }
+        return false;
     }
 }

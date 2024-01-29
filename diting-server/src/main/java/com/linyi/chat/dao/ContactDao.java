@@ -1,5 +1,8 @@
 package com.linyi.chat.dao;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.linyi.chat.domain.entity.Contact;
 import com.linyi.chat.domain.entity.Message;
@@ -71,5 +74,15 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact>{
                 .in(Contact::getRoomId, roomIds)
                 .eq(Contact::getUid, uid)
                 .list();
+    }
+
+    public Boolean removeByRoomId(Long roomId, List uidList) {
+        if (CollectionUtil.isNotEmpty(uidList)) {
+            LambdaQueryWrapper<Contact> wrapper = new QueryWrapper<Contact>().lambda()
+                    .eq(Contact::getRoomId, roomId)
+                    .in(Contact::getUid, uidList);
+            return this.remove(wrapper);
+        }
+        return false;
     }
 }
