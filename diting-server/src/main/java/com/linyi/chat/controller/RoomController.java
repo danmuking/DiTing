@@ -1,12 +1,9 @@
 package com.linyi.chat.controller;
 
-import com.linyi.chat.domain.vo.request.MemberExitReq;
-import com.linyi.chat.domain.vo.request.MemberDelReq;
+import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMemberListResp;
-import com.linyi.chat.domain.vo.request.ChatMessageMemberReq;
-import com.linyi.chat.domain.vo.request.IdReqVO;
-import com.linyi.chat.domain.vo.request.MemberReq;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
+import com.linyi.chat.domain.vo.response.IdRespVO;
 import com.linyi.chat.domain.vo.response.MemberResp;
 import com.linyi.chat.service.GroupMemberService;
 import com.linyi.chat.service.RoomAppService;
@@ -71,5 +68,13 @@ public class RoomController{
         Long uid = RequestHolder.get().getUid();
         groupMemberService.exitGroup(uid, request);
         return ApiResult.success();
+    }
+
+    @PostMapping("/group")
+    @ApiOperation("新增群组")
+    public ApiResult<IdRespVO> addGroup(@Valid @RequestBody GroupAddReq request) {
+        Long uid = RequestHolder.get().getUid();
+        Long roomId = roomService.addGroup(uid, request);
+        return ApiResult.success(IdRespVO.id(roomId));
     }
 }

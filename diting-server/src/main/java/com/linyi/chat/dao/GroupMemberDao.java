@@ -92,4 +92,11 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
         }
         return false;
     }
+
+    public List<GroupMember> getSelfGroup(Long uid) {
+        return lambdaQuery()
+                .eq(GroupMember::getUid, uid)
+                .eq(GroupMember::getRole, GroupRoleEnum.LEADER.getType())
+                .list();
+    }
 }

@@ -14,6 +14,7 @@ import com.linyi.chat.domain.entity.RoomGroup;
 import com.linyi.chat.domain.enums.GroupRoleAPPEnum;
 import com.linyi.chat.domain.enums.GroupRoleEnum;
 import com.linyi.chat.domain.vo.request.ChatMessageMemberReq;
+import com.linyi.chat.domain.vo.request.GroupAddReq;
 import com.linyi.chat.domain.vo.request.MemberDelReq;
 import com.linyi.chat.domain.vo.request.MemberReq;
 import com.linyi.chat.domain.vo.response.ChatMemberListResp;
@@ -23,11 +24,13 @@ import com.linyi.chat.domain.vo.response.MemberResp;
 import com.linyi.chat.service.ChatService;
 import com.linyi.chat.service.RoomAppService;
 import com.linyi.chat.service.adapter.MemberAdapter;
+import com.linyi.chat.service.adapter.RoomAdapter;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
 import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
 import com.linyi.common.domain.enums.RoomTypeEnum;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
+import com.linyi.common.event.GroupMemberAddEvent;
 import com.linyi.common.exception.GroupErrorEnum;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.RoomDao;
@@ -44,6 +47,8 @@ import com.linyi.user.service.IRoleService;
 import com.linyi.user.service.RoomService;
 import com.linyi.user.service.adapter.ChatAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -78,6 +83,8 @@ public class RoomAppServiceImpl implements RoomAppService {
     private ChatService chatService;
     @Autowired
     private IRoleService iRoleService;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
     @Override
     public CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid) {
         CursorPageBaseResp<Long> page;
@@ -217,6 +224,17 @@ public class RoomAppServiceImpl implements RoomAppService {
         List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getRoomId());
         WSBaseResp<WSMemberChange> ws = MemberAdapter.buildMemberRemoveWS(roomGroup.getRoomId(), member.getUid());
 //        pushService.sendPushMsg(ws, memberUidList);
+    }
+
+    @Override
+    public Long addGroup(Long uid, GroupAddReq request) {
+        RoomGroup roomGroup = roomService.createGroupRoom(uid);
+//        批量保存群成员
+        List<GroupMember> groupMembers = RoomAdapter.buildGroupMemberBatch(request.getUidList(), roomGroup.getId());
+        groupMemberDao.saveBatch(groupMembers);
+        // 发送邀请加群消息==》触发每个人的会话
+        applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, roomGroup, groupMembers, uid));
+        return roomGroup.getRoomId();
     }
 
     private boolean hasPower(GroupMember self) {

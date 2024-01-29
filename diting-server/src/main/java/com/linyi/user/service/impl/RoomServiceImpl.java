@@ -3,12 +3,15 @@ package com.linyi.user.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Pair;
 import com.linyi.chat.dao.ContactDao;
+import com.linyi.chat.dao.GroupMemberDao;
 import com.linyi.chat.dao.MessageDao;
 import com.linyi.chat.dao.RoomGroupDao;
 import com.linyi.chat.domain.dto.RoomBaseInfo;
 import com.linyi.chat.domain.entity.Contact;
+import com.linyi.chat.domain.entity.GroupMember;
 import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.entity.RoomGroup;
+import com.linyi.chat.domain.enums.GroupRoleEnum;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
 import com.linyi.chat.domain.vo.response.MemberResp;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
@@ -52,6 +55,12 @@ public class RoomServiceImpl implements RoomService {
     private RoomFriendDao roomFriendDao;
     @Autowired
     private RoomDao roomDao;
+    @Autowired
+    private GroupMemberDao groupMemberDao;
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private RoomGroupDao roomGroupDao;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -94,6 +103,28 @@ public class RoomServiceImpl implements RoomService {
     public RoomFriend getFriendRoom(Long uid, Long friendUid) {
         String key = RoomAdapter.generateRoomKey(Arrays.asList(uid, friendUid));
         return roomFriendDao.getByKey(key);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public RoomGroup createGroupRoom(Long uid) {
+//        判断是否已经创建过群聊
+        List<GroupMember> selfGroup = groupMemberDao.getSelfGroup(uid);
+        AssertUtil.isEmpty(selfGroup, "每个人只能创建一个群");
+        User user = userDao.getByUid(uid);
+//        创建房间
+        Room room = createRoom(RoomTypeEnum.GROUP);
+//        创建群
+        RoomGroup roomGroup = ChatAdapter.buildGroupRoom(user, room.getId());
+        roomGroupDao.save(roomGroup);
+//        创建群主
+        GroupMember leader = GroupMember.builder()
+                .role(GroupRoleEnum.LEADER.getType())
+                .groupId(roomGroup.getId())
+                .uid(uid)
+                .build();
+        groupMemberDao.save(leader);
+        return roomGroup;
     }
 
     /**

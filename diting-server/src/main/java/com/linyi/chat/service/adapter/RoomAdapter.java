@@ -1,6 +1,8 @@
 package com.linyi.chat.service.adapter;
 
 import com.linyi.chat.domain.entity.Contact;
+import com.linyi.chat.domain.entity.GroupMember;
+import com.linyi.chat.domain.enums.GroupRoleEnum;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 
 import java.util.List;
@@ -19,5 +21,17 @@ public class RoomAdapter {
             resp.setUid(contact.getUid());
             return resp;
         }).collect(Collectors.toList());
+    }
+
+    public static List<GroupMember> buildGroupMemberBatch(List<Long> uidList, Long groupId) {
+        return uidList.stream()
+                .distinct()
+                .map(uid -> {
+                    GroupMember member = new GroupMember();
+                    member.setRole(GroupRoleEnum.MEMBER.getType());
+                    member.setUid(uid);
+                    member.setGroupId(groupId);
+                    return member;
+                }).collect(Collectors.toList());
     }
 }

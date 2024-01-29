@@ -1,5 +1,6 @@
 package com.linyi.user.service;
 
+import com.linyi.chat.domain.entity.RoomGroup;
 import com.linyi.chat.domain.vo.response.ChatRoomResp;
 import com.linyi.chat.domain.vo.response.MemberResp;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
@@ -40,4 +41,5 @@ public interface RoomService {
     RoomFriend getFriendRoom(Long uid, Long friendUid);
 
 
+    RoomGroup createGroupRoom(Long uid);
 }
