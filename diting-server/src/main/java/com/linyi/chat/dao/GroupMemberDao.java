@@ -128,4 +128,12 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .set(GroupMember::getRole, GroupRoleEnum.MANAGER.getType());
         this.update(wrapper);
     }
+
+    public void revokeAdmin(Long id, List<Long> uidList) {
+        LambdaUpdateWrapper<GroupMember> wrapper = new UpdateWrapper<GroupMember>().lambda()
+                .eq(GroupMember::getGroupId, id)
+                .in(GroupMember::getUid, uidList)
+                .set(GroupMember::getRole, GroupRoleEnum.MEMBER.getType());
+        this.update(wrapper);
+    }
 }

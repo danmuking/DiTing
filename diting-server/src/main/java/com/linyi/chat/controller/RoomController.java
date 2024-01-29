@@ -93,4 +93,12 @@ public class RoomController{
         groupMemberService.addAdmin(uid, request);
         return ApiResult.success();
     }
+
+    @DeleteMapping("/group/admin")
+    @ApiOperation("撤销管理员")
+    public ApiResult<Boolean> revokeAdmin(@Valid @RequestBody AdminRevokeReq request) {
+        Long uid = RequestHolder.get().getUid();
+        groupMemberService.revokeAdmin(uid, request);
+        return ApiResult.success();
+    }
 }

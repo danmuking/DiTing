@@ -6,6 +6,7 @@ import com.linyi.chat.dao.MessageDao;
 import com.linyi.chat.dao.RoomGroupDao;
 import com.linyi.chat.domain.entity.RoomGroup;
 import com.linyi.chat.domain.vo.request.AdminAddReq;
+import com.linyi.chat.domain.vo.request.AdminRevokeReq;
 import com.linyi.chat.domain.vo.request.MemberExitReq;
 import com.linyi.chat.service.GroupMemberService;
 import com.linyi.chat.service.adapter.MemberAdapter;
@@ -121,5 +122,23 @@ public class GroupMemberServiceImpl implements GroupMemberService {
 
         // 5. 增加管理员
         groupMemberDao.addAdmin(roomGroup.getId(), request.getUidList());
+    }
+
+    @Override
+    public void revokeAdmin(Long uid, AdminRevokeReq request) {
+//        1. 判断群聊是否存在
+        RoomGroup roomGroup = roomGroupDao.getByRoomId(request.getRoomId());
+        AssertUtil.isNotEmpty(roomGroup, GroupErrorEnum.GROUP_NOT_EXIST);
+
+//        2. 判断该用户是否是群主
+        Boolean isLord = groupMemberDao.isLord(roomGroup.getId(), uid);
+        AssertUtil.isTrue(isLord, GroupErrorEnum.NOT_ALLOWED_OPERATION);
+
+//        3. 判断群成员是否在群中
+        Boolean isGroupShip = groupMemberDao.isGroupShip(roomGroup.getId(), request.getUidList());
+        AssertUtil.isTrue(isGroupShip, GroupErrorEnum.USER_NOT_IN_GROUP);
+
+//        4. 撤销管理员
+        groupMemberDao.revokeAdmin(roomGroup.getId(), request.getUidList());
     }
 }

@@ -1,6 +1,7 @@
 package com.linyi.chat.service;
 
 import com.linyi.chat.domain.vo.request.AdminAddReq;
+import com.linyi.chat.domain.vo.request.AdminRevokeReq;
 import com.linyi.chat.domain.vo.request.MemberExitReq;
 
 /**
@@ -30,4 +31,13 @@ public interface GroupMemberService {
      * @date 2024/1/29 19:52
      */
     void addAdmin(Long uid, AdminAddReq request);
+
+    /**
+     * @param uid:
+     * @param request:
+     * @return void
+     * @description 移除管理员
+     * @date 2024/1/29 20:00
+     */
+    void revokeAdmin(Long uid, AdminRevokeReq request);
 }
