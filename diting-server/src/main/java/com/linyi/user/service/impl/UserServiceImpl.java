@@ -23,6 +23,7 @@ import com.linyi.user.service.UserService;
 import com.linyi.user.service.adapter.BadgeRespAdapter;
 import com.linyi.user.service.adapter.UserAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @CacheEvict(value = "user",key = "'badges'+#uid")
     @Override
     public void wearingBadge(Long uid, WearingBadgeReq req) {
 //        查询用户是否拥有该徽章
@@ -95,6 +97,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "user",key = "'userInfo'+#uid")
     public void modifyName(Long uid, ModifyNameReq req) {
 //        判断改名卡够不够
         UserBackpack firstValidItem = userBackpackDao.getFirstValidItem(uid, ItemEnum.MODIFY_NAME_CARD.getId());

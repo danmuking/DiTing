@@ -5,6 +5,8 @@ logging:
     org.springframework.web: INFO
     com.github.binarywang.demo.wx.mp: DEBUG
     me.chanjar.weixin: DEBUG
+  file:
+    path: G:\\code\\DiTing
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
