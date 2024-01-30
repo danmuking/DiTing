@@ -36,8 +36,21 @@ public interface WebSocketService {
      */
     void userOffline(Channel channel);
 
+    /**
+     * @param code:
+     * @param id:
+     * @return void
+     * @description 登录成功流程
+     * @date 2024/1/30 18:03
+     */
     void scanLoginSuccess(Integer code, Long id);
 
+    /**
+     * @param code:
+     * @return void
+     * @description 发送授权消息
+     * @date 2024/1/30 18:03
+     */
     void sendAuthorizeMsg(int code);
 
     /**

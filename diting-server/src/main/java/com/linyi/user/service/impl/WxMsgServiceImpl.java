@@ -25,7 +25,7 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class WxMsgServiceImpl implements WxMsgService {
-    private static final Cache<String,Integer> WAIT_LOGIN_MAP = Caffeine.newBuilder().maximumSize(10000L).expireAfterWrite(Duration.ofHours(1)).build();
+    private static final Cache<String,Integer> USER_OPENID_MAP = Caffeine.newBuilder().maximumSize(10000L).expireAfterWrite(Duration.ofHours(1)).build();
     private static final String URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
     @Value("${wx.mp.callback}")
     private String callback;
@@ -58,7 +58,7 @@ public class WxMsgServiceImpl implements WxMsgService {
             userService.register(user);
         }
 //        绑定事件码和openid
-        WAIT_LOGIN_MAP.put(openId,code);
+        USER_OPENID_MAP.put(openId,code);
 //        请求用户授权
 //        发送请求授权信息
         webSocketService.sendAuthorizeMsg(code);
@@ -73,9 +73,9 @@ public class WxMsgServiceImpl implements WxMsgService {
 //        将用户昵称和头像存入数据库
         user = UserAdapter.buildAuthorizeUser(user.getId(), userInfo);
         userDao.updateById(user);
-        Integer code = WAIT_LOGIN_MAP.getIfPresent(openid);
+        Integer code = USER_OPENID_MAP.getIfPresent(openid);
 //        删除缓存
-        WAIT_LOGIN_MAP.invalidate(openid);
+        USER_OPENID_MAP.invalidate(openid);
 //        授权完成，向前端发送通知
         webSocketService.scanLoginSuccess(code, user.getId());
     }

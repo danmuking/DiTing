@@ -23,6 +23,7 @@ import com.linyi.user.service.UserService;
 import com.linyi.user.service.adapter.BadgeRespAdapter;
 import com.linyi.user.service.adapter.UserAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,7 @@ public class UserServiceImpl implements UserService {
         applicationEventPublisher.publishEvent(new UserRegisterEvent(this, user));
     }
 
+    @Cacheable(value = "user",key = "'userInfo'+#uid")
     @Override
     public UserInfoResp getUserInfo(Long uid) {
 //        查询uid对应的用户信息
@@ -59,6 +61,7 @@ public class UserServiceImpl implements UserService {
         return UserAdapter.buildUserInfoResp(user,renameCardNum);
     }
 
+    @Cacheable(value = "user",key = "'badges'+#uid")
     @Override
     public List<BadgeResp> badges(Long uid) {
 //        查询当前所有徽章

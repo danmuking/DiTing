@@ -22,10 +22,12 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import static com.linyi.common.constant.NettyConstant.PORT;
+
 @Slf4j
 @Configuration
 public class NettyWebSocketServer {
-    public static final int WEB_SOCKET_PORT = 8090;
+    public static final int WEB_SOCKET_PORT = PORT;
     public static final NettyWebSocketServerHandler NETTY_WEB_SOCKET_SERVER_HANDLER = new NettyWebSocketServerHandler();
 
     //    创建线程池执行器

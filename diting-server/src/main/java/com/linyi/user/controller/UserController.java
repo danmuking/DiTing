@@ -9,6 +9,7 @@ import com.linyi.user.domain.vo.request.user.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
 import com.linyi.user.service.UserService;
+import com.linyi.user.service.cache.UserInfoCache;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ import java.util.List;
 @RequestMapping("/capi/user")
 public class UserController {
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @GetMapping("/userInfo")
     @ApiOperation("用户详情")

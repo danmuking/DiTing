@@ -106,11 +106,13 @@ public class WebSocketServiceImpl implements WebSocketService {
         WAIT_LOGIN_MAP.invalidate(code);
 
         User user = userDao.getById(uid);
+//        生成token
         String token = loginService.login(uid);
 //        向前端返回通知
         sendMsg(channel,WSAdapter.buildLoginSuccessResp(user,token));
 //        发布事件
         user.setLastOptTime(new Date());
+//        刷新ip
         user.refreshIp(NettyUtils.getAttr(channel, NettyUtils.IP));
         applicationEventPublisher.publishEvent(new UserOnlineEvent(this,user));
     }
