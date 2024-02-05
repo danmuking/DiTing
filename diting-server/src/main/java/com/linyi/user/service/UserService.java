@@ -1,8 +1,10 @@
 package com.linyi.user.service;
 
+import com.linyi.user.domain.dto.SummeryInfoDTO;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.vo.request.user.BlackReq;
 import com.linyi.user.domain.vo.request.user.ModifyNameReq;
+import com.linyi.user.domain.vo.request.user.SummeryInfoReq;
 import com.linyi.user.domain.vo.request.user.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
@@ -59,4 +61,12 @@ public interface UserService {
      * @date 2024/1/21 23:00
      */
     void black(BlackReq req);
+
+    /**
+     * @param req:
+     * @return List<SummeryInfoDTO>
+     * @description 查询用户聚合信息
+     * @date 2024/2/4 23:30
+     */
+    List<SummeryInfoDTO> getSummeryUserInfo(SummeryInfoReq req);
 }

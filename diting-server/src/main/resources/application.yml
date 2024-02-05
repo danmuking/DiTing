@@ -54,6 +54,40 @@ wx:
         secret: ${mallchat.wx.secret} # 公众号的appsecret
         token: ${mallchat.wx.token} # 接口配置里的Token值
         aesKey: ${mallchat.wx.aesKey} # 接口配置里的EncodingAESKey值
+
+j2cache:
+  # 开启J2Cache支持Spring Cache
+  open-spring-cache: true
+  # 缓存清除模式（active | passive | blend）
+  cache-clean-mode: passive
+  # 缓存变更广播方式（jgroups | redis | lettuce | rabbitmq | rocketmq | none | 自定义class）
+  # 保持默认SpringBoot Redis自定义实现SpringRedisPubSubPolicy
+  broadcast: com.luo.j2cache.sb.cache.support.redis.SpringRedisPubSubPolicy
+  # 缓存null对象
+  default-cache-null-object: true
+  # L1缓存配置
+  l1:
+    # L1 缓存provider名称（caffeine | ehcache | ehcache3）
+    provider-class: caffeine
+    # Caffeine配置
+    caffeine:
+      region:
+        default: 100,10m
+        myRegion: 10,5m
+  # L2缓存配置
+  l2:
+    # L2 缓存provider名称（redis | lettuce | readonly-redis | memcached）
+    # 保持默认SpringBoot Redis自定义实现SpringRedisProvider
+    provider-class: com.luo.j2cache.sb.cache.support.redis.SpringRedisProvider
+    # 二级缓存序列化格式（fst（推荐） | kryo | json | fastjson | java（默认） | fse | 自定义classname）
+    serialization: fastjson
+    redis:
+      # 是否启用同步一级缓存的Time-To-Live超时时间到Redis TTL（true启用，false不启用则永不超时）
+      sync-ttl-to-redis: true
+      # Redis发布订阅（Pub/Sub）对应的channel名称
+      channel: j2cache
+      #  Key命名空间（前缀），默认为空
+      namespace: myName
 #chatai:
 #  chatgpt:
 #    use: ${mallchat.chatgpt.use}

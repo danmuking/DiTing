@@ -3,8 +3,10 @@ package com.linyi.user.controller;
 
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.utils.RequestHolder;
+import com.linyi.user.domain.dto.SummeryInfoDTO;
 import com.linyi.user.domain.vo.request.user.BlackReq;
 import com.linyi.user.domain.vo.request.user.ModifyNameReq;
+import com.linyi.user.domain.vo.request.user.SummeryInfoReq;
 import com.linyi.user.domain.vo.request.user.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
@@ -63,5 +65,12 @@ public class UserController {
         userService.black(req);
         return ApiResult.success();
     }
+
+    @PostMapping("/public/summary/userInfo/batch")
+    @ApiOperation("用户聚合信息-返回的代表需要刷新的")
+    public ApiResult<List<SummeryInfoDTO>> getSummeryUserInfo(@Valid @RequestBody SummeryInfoReq req) {
+        return ApiResult.success(userService.getSummeryUserInfo(req));
+    }
+
 }
 

@@ -6,6 +6,7 @@ import com.linyi.common.utils.RequestHolder;
 import com.linyi.user.dao.ItemConfigDao;
 import com.linyi.user.dao.UserBackpackDao;
 import com.linyi.user.dao.UserDao;
+import com.linyi.user.domain.dto.SummeryInfoDTO;
 import com.linyi.user.domain.entity.ItemConfig;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.entity.UserBackpack;
@@ -15,6 +16,7 @@ import com.linyi.user.domain.enums.RoleEnum;
 import com.linyi.user.domain.enums.UserStatusEnum;
 import com.linyi.user.domain.vo.request.user.BlackReq;
 import com.linyi.user.domain.vo.request.user.ModifyNameReq;
+import com.linyi.user.domain.vo.request.user.SummeryInfoReq;
 import com.linyi.user.domain.vo.request.user.WearingBadgeReq;
 import com.linyi.user.domain.vo.response.user.BadgeResp;
 import com.linyi.user.domain.vo.response.user.UserInfoResp;
@@ -22,13 +24,17 @@ import com.linyi.user.service.IRoleService;
 import com.linyi.user.service.UserService;
 import com.linyi.user.service.adapter.BadgeRespAdapter;
 import com.linyi.user.service.adapter.UserAdapter;
+import com.linyi.user.service.cache.UserCache;
+import com.linyi.user.service.cache.UserSummaryCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -44,6 +50,10 @@ public class UserServiceImpl implements UserService {
     private ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     private IRoleService iRoleService;
+    @Autowired
+    private UserCache userCache;
+    @Autowired
+    private UserSummaryCache userSummaryCache;
     @Override
     public void register(User user) {
         userDao.save(user);
@@ -54,7 +64,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoResp getUserInfo(Long uid) {
 //        查询uid对应的用户信息
-        User user = userDao.getByUid(uid);
+        User user = userCache.getUserInfo(uid);
 //        查询用户改名卡数量
         Integer renameCardNum = userBackpackDao.getCountByValidItemId(uid, ItemEnum.MODIFY_NAME_CARD.getId());
 //        构建返回对象
@@ -120,5 +130,31 @@ public class UserServiceImpl implements UserService {
         User update = User.builder().id(req.getUid()).status(UserStatusEnum.BLACK.getStatus()).build();
 //        拉黑用户
         userDao.updateById(update);
+    }
+
+    @Override
+    public List<SummeryInfoDTO> getSummeryUserInfo(SummeryInfoReq req) {
+//        需要前端同步的uid
+        List<Long> uidList = getNeedSyncUidList(req.getReqList());
+//        加载用户信息
+        Map<Long, SummeryInfoDTO> batch = userSummaryCache.getBatch(uidList);
+        return req.getReqList()
+                .stream()
+                .map(a -> batch.containsKey(a.getUid()) ? batch.get(a.getUid()) : SummeryInfoDTO.skip(a.getUid()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private List<Long> getNeedSyncUidList(List<SummeryInfoReq.infoReq> reqList) {
+        List<Long> needSyncUidList = new ArrayList<>();
+        List<Long> userModifyTime = userCache.getUserModifyTime(reqList.stream().map(SummeryInfoReq.infoReq::getUid).collect(Collectors.toList()));
+        for (int i = 0; i < reqList.size(); i++) {
+            SummeryInfoReq.infoReq infoReq = reqList.get(i);
+            Long modifyTime = userModifyTime.get(i);
+            if (Objects.isNull(infoReq.getLastModifyTime()) || (Objects.nonNull(modifyTime) && modifyTime > infoReq.getLastModifyTime())) {
+                needSyncUidList.add(infoReq.getUid());
+            }
+        }
+        return needSyncUidList;
     }
 }

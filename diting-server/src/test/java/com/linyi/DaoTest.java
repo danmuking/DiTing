@@ -3,6 +3,8 @@ package com.linyi;
 import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.service.LoginService;
+import net.oschina.j2cache.CacheChannel;
+import net.oschina.j2cache.J2Cache;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class DaoTest {
 
     @Autowired
     LoginService loginService;
+    @Autowired
+    private CacheChannel cacheChannel;
 
     @Test
     public void test(){
@@ -44,5 +48,18 @@ public class DaoTest {
     public void generateToken(){
         String login = loginService.login(11022L);
         System.out.println(login);
+    }
+
+    @Test
+    public void testCache(){
+        CacheChannel cache = J2Cache.getChannel();
+
+        //缓存操作
+        cache.set("default", "1", "Hello J2Cache");
+        System.out.println(cache.get("default", "1"));
+        cache.evict("default", "1");
+        System.out.println(cache.get("default", "1"));
+
+        cache.close();
     }
 }
