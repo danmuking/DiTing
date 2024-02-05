@@ -1,7 +1,9 @@
 package com.linyi.user.service;
 
+import com.linyi.user.domain.dto.ItemInfoDTO;
 import com.linyi.user.domain.dto.SummeryInfoDTO;
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.vo.request.friend.ItemInfoReq;
 import com.linyi.user.domain.vo.request.user.BlackReq;
 import com.linyi.user.domain.vo.request.user.ModifyNameReq;
 import com.linyi.user.domain.vo.request.user.SummeryInfoReq;
@@ -69,4 +71,6 @@ public interface UserService {
      * @date 2024/2/4 23:30
      */
     List<SummeryInfoDTO> getSummeryUserInfo(SummeryInfoReq req);
+
+    List<ItemInfoDTO> getItemInfo(ItemInfoReq req);
 }
