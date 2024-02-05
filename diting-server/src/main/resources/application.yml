@@ -45,6 +45,10 @@ spring:
   jackson:
     serialization:
       write-dates-as-timestamps: true
+  cache:
+    # Spring Cache缓存类型（generic | jcache | ehcache | hazelcast | infinispan | couchbase | redis | caffeine | simple | none）
+    # generic即使用自定义的Cache Beans，对应J2CacheCacheManager实现
+    type: GENERIC
 jwt:
   secret: ${mallchat.jwt.secret}
 wx:
@@ -57,6 +61,7 @@ wx:
         token: ${mallchat.wx.token} # 接口配置里的Token值
         aesKey: ${mallchat.wx.aesKey} # 接口配置里的EncodingAESKey值
 
+# J2Cache配置
 j2cache:
   # 开启J2Cache支持Spring Cache
   open-spring-cache: true
@@ -90,6 +95,12 @@ j2cache:
       channel: j2cache
       #  Key命名空间（前缀），默认为空
       namespace: myName
+#  兼容原J2Cache属性配置（即原来需要放到j2cache.properties中的属性皆可直接在此配置）
+#  默认使用redis则无需此配置
+#  properties:
+#    caffeine.region.myRegion: 100,5m
+#    redis.mode: single
+
 #chatai:
 #  chatgpt:
 #    use: ${mallchat.chatgpt.use}

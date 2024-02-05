@@ -27,8 +27,8 @@ import java.util.concurrent.TimeUnit;
  * @author: lin
  * @create: 2024-01-30 19:07
  **/
-@Configuration
-@EnableCaching
+//@Configuration
+//@EnableCaching
 public class CacheConfig {
 
     /**
@@ -37,8 +37,8 @@ public class CacheConfig {
      * @description redis缓存管理器
      * @date 2024/1/30 19:27
      */
-    @Bean
-    @Primary
+//    @Bean
+//    @Primary
     public CacheManager cacheManager(RedisTemplate<String, Object> template) {
         // 基本配置
         RedisCacheConfiguration defaultCacheConfiguration =

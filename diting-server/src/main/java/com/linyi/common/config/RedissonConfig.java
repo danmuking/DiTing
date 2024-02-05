@@ -25,6 +25,7 @@ public class RedissonConfig {
                 .setAddress("redis://" + redisProperties.getHost() + ":" + redisProperties.getPort())
                 .setPassword(redisProperties.getPassword())
                 .setDatabase(redisProperties.getDatabase());
+        config.useSingleServer().setConnectionMinimumIdleSize(10);
         return Redisson.create(config);
     }
 }

@@ -11,10 +11,10 @@ import org.springframework.util.Assert;
 
 import java.util.Objects;
 
-@Configuration
+//@Configuration
 public class RedisConfig {
 
-    @Bean("myRedisTemplate")
+//    @Bean("myRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         // 创建模板
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();

@@ -52,7 +52,7 @@ public class DaoTest {
 
     @Test
     public void testCache(){
-        CacheChannel cache = J2Cache.getChannel();
+        CacheChannel cache = cacheChannel;
 
         //缓存操作
         cache.set("default", "1", "Hello J2Cache");
