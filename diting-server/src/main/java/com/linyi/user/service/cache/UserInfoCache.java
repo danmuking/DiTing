@@ -1,6 +1,7 @@
 package com.linyi.user.service.cache;
 
 import com.linyi.common.constant.RedisKey;
+import com.linyi.common.service.cache.AbstractJ2Cache;
 import com.linyi.common.service.cache.AbstractRedisStringCache;
 import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.entity.User;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * @create: 2024-01-30 19:52
  **/
 @Component
-public class UserInfoCache extends AbstractRedisStringCache<Long, User> {
+public class UserInfoCache extends AbstractJ2Cache<Long, User> {
     @Autowired
     private UserDao userDao;
 
@@ -28,7 +29,6 @@ public class UserInfoCache extends AbstractRedisStringCache<Long, User> {
         return RedisKey.getKey(RedisKey.USER_INFO_STRING, uid);
     }
 
-    @Override
     protected Long getExpireSeconds() {
         return 5 * 60L;
     }

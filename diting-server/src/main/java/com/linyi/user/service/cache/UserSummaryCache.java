@@ -1,6 +1,7 @@
 package com.linyi.user.service.cache;
 
 import com.linyi.common.constant.RedisKey;
+import com.linyi.common.service.cache.AbstractJ2Cache;
 import com.linyi.common.service.cache.AbstractRedisStringCache;
 import com.linyi.user.dao.UserBackpackDao;
 import com.linyi.user.domain.dto.SummeryInfoDTO;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  * @create: 2024-02-04 23:41
  **/
 @Component
-public class UserSummaryCache extends AbstractRedisStringCache<Long, SummeryInfoDTO> {
+public class UserSummaryCache extends AbstractJ2Cache<Long, SummeryInfoDTO> {
     @Autowired
     private UserInfoCache userInfoCache;
     @Autowired
@@ -32,7 +33,6 @@ public class UserSummaryCache extends AbstractRedisStringCache<Long, SummeryInfo
         return RedisKey.getKey(RedisKey.USER_SUMMARY_STRING, uid);
     }
 
-    @Override
     protected Long getExpireSeconds() {
         return 10 * 60L;
     }

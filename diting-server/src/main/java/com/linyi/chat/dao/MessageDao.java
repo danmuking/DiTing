@@ -69,4 +69,11 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
         }
         return false;
     }
+
+    public void invalidByUid(Long uid) {
+        LambdaUpdateWrapper<Message> wrapper = new UpdateWrapper<Message>().lambda()
+                .eq(Message::getFromUid, uid)
+                .set(Message::getStatus, MessageStatusEnum.DELETE.getStatus());
+        this.update(wrapper);
+    }
 }

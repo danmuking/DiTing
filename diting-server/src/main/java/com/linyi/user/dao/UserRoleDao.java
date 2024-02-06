@@ -6,6 +6,8 @@ import com.linyi.user.service.IUserRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户角色关系表 服务实现类
@@ -30,5 +32,17 @@ public class UserRoleDao extends ServiceImpl<UserRoleMapper, UserRole> implement
                 .eq(UserRole::getRoleId, roleId)
                 .last("limit 1")
                 .one();
+    }
+
+    /**
+     * @param uid:
+     * @return List<UserRole>
+     * @description 根据uid获取用户角色
+     * @date 2024/2/6 21:26
+     */
+    public List<UserRole> listByUid(Long uid) {
+        return lambdaQuery()
+                .eq(UserRole::getUid, uid)
+                .list();
     }
 }
