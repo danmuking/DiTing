@@ -8,6 +8,7 @@ import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.request.PageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.domain.vo.response.PageBaseResp;
+import com.linyi.common.event.UserApplyEvent;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.UserApplyDao;
 import com.linyi.user.dao.UserDao;
@@ -26,9 +27,11 @@ import com.linyi.user.domain.vo.response.friend.FriendUnreadResp;
 import com.linyi.user.service.FriendService;
 import com.linyi.user.service.RoomService;
 import com.linyi.user.service.adapter.FriendAdapter;
+import jdk.nashorn.internal.objects.annotations.Property;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,9 +67,11 @@ public class FriendServiceImpl implements FriendService {
     private FriendServiceImpl friendService;
     @Autowired
     RoomService roomService;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
-//    TODO:这个地方是否需要事务
     @Override
+    @RedissonLock(key = "#uid")
     public void apply(Long uid, FriendApplyReq request) {
 //        判断是否已经是好友
         UserFriend friend = userFriendDao.getByFriend(uid, request.getTargetUid());
@@ -86,6 +91,7 @@ public class FriendServiceImpl implements FriendService {
 //        如果没有发送过好友申请，创建好友申请记录
         UserApply insert = FriendAdapter.buildFriendApply(uid, request);
         userApplyDao.save(insert);
+        applicationEventPublisher.publishEvent(new UserApplyEvent(this, insert));
     }
 
 

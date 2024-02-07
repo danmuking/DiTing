@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>diting-server</module>
+        <module>diting-tools</module>
     </modules>
 
     <parent>

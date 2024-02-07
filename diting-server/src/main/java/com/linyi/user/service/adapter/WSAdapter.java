@@ -3,6 +3,7 @@ package com.linyi.user.service.adapter;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.enums.WSRespTypeEnum;
 import com.linyi.user.domain.vo.response.ws.WSBaseResp;
+import com.linyi.user.domain.vo.response.ws.WSFriendApply;
 import com.linyi.user.domain.vo.response.ws.WSLoginSuccess;
 import com.linyi.user.domain.vo.response.ws.WSLoginUrl;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
@@ -41,5 +42,12 @@ public class WSAdapter {
         WSBaseResp<WSLoginUrl> wsLoginUrlWSBaseResp = new WSBaseResp<>();
         wsLoginUrlWSBaseResp.setType(WSRespTypeEnum.LOGIN_SCAN_SUCCESS.getType());
         return wsLoginUrlWSBaseResp;
+    }
+
+    public static WSBaseResp<WSFriendApply> buildApplySend(WSFriendApply resp) {
+        WSBaseResp<WSFriendApply> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.APPLY.getType());
+        wsBaseResp.setData(resp);
+        return wsBaseResp;
     }
 }

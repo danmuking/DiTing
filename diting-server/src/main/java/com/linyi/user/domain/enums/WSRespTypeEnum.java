@@ -1,6 +1,7 @@
 package com.linyi.user.domain.enums;
 
 import com.linyi.user.domain.vo.request.user.WSMemberChange;
+import com.linyi.user.domain.vo.response.ws.WSFriendApply;
 import com.linyi.user.domain.vo.response.ws.WSLoginSuccess;
 import com.linyi.user.domain.vo.response.ws.WSLoginUrl;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public enum WSRespTypeEnum {
 //    BLACK(7, "拉黑用户", WSBlack.class),
 //    MARK(8, "消息标记", WSMsgMark.class),
 //    RECALL(9, "消息撤回", WSMsgRecall.class),
-//    APPLY(10, "好友申请", WSFriendApply.class),
+    APPLY(10, "好友申请", WSFriendApply.class),
     MEMBER_CHANGE(11, "成员变动", WSMemberChange.class),
     ;
 

@@ -5,10 +5,13 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.service.LoginService;
 import net.oschina.j2cache.CacheChannel;
 import net.oschina.j2cache.J2Cache;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -32,6 +35,8 @@ public class DaoTest {
     LoginService loginService;
     @Autowired
     private CacheChannel cacheChannel;
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
 
     @Test
     public void test(){
@@ -61,5 +66,10 @@ public class DaoTest {
         System.out.println(cache.get("default", "1"));
 
         cache.close();
+    }
+    @Test
+    public void sendMQ() {
+        Message<String> build = MessageBuilder.withPayload("123").build();
+        rocketMQTemplate.send("test-topic", build);
     }
 }

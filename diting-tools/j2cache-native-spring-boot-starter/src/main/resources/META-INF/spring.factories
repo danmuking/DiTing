@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.luo.j2cache.sb.autoconfigure.J2CacheAutoConfiguration,\
+com.luo.j2cache.sb.autoconfigure.J2CacheSpringCacheAutoConfiguration,\
+com.luo.j2cache.sb.autoconfigure.J2CacheSpringRedisAutoConfiguration
