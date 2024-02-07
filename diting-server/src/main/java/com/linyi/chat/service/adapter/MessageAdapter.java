@@ -5,7 +5,9 @@ import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.entity.MessageMark;
 import com.linyi.chat.domain.enums.MessageMarkTypeEnum;
 import com.linyi.chat.domain.enums.MessageStatusEnum;
+import com.linyi.chat.domain.enums.MessageTypeEnum;
 import com.linyi.chat.domain.vo.request.ChatMessageReq;
+import com.linyi.chat.domain.vo.request.msg.TextMsgReq;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
 import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
@@ -115,5 +117,21 @@ public class MessageAdapter {
                 .status(MessageStatusEnum.NORMAL.getStatus())
                 .build();
 
+    }
+
+    /**
+     * @param roomId:
+     * @return ChatMessageReq
+     * @description 构建统一消息
+     * @date 2024/2/7 21:42
+     */
+    public static ChatMessageReq buildAgreeMsg(Long roomId) {
+        ChatMessageReq chatMessageReq = new ChatMessageReq();
+        chatMessageReq.setRoomId(roomId);
+        chatMessageReq.setMsgType(MessageTypeEnum.TEXT.getType());
+        TextMsgReq textMsgReq = new TextMsgReq();
+        textMsgReq.setContent("我们已经成为好友了，开始聊天吧");
+        chatMessageReq.setBody(textMsgReq);
+        return chatMessageReq;
     }
 }

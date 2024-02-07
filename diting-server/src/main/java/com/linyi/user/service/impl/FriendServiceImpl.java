@@ -3,6 +3,8 @@ package com.linyi.user.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Lists;
+import com.linyi.chat.service.ChatService;
+import com.linyi.chat.service.adapter.MessageAdapter;
 import com.linyi.common.annotation.RedissonLock;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.request.PageBaseReq;
@@ -69,6 +71,8 @@ public class FriendServiceImpl implements FriendService {
     RoomService roomService;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    private ChatService chatService;
 
     @Override
     @RedissonLock(key = "#uid")
@@ -112,7 +116,8 @@ public class FriendServiceImpl implements FriendService {
         createFriend(uid, userApply.getUid());
 //        创建聊天房间
         RoomFriend roomFriend = roomService.createFriendRoom(Arrays.asList(uid, userApply.getUid()));
-//        TODO: 发送同意消息
+//        发送默认消息
+        chatService.sendMsg(MessageAdapter.buildAgreeMsg(roomFriend.getRoomId()), uid);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -125,11 +130,19 @@ public class FriendServiceImpl implements FriendService {
         List<UserFriend> userFriends = userFriendDao.getUserFriend(uid, targetUid);
         AssertUtil.isNotEmpty(userFriends, "不存在好友关系");
         List<Long> friendRecordIds = userFriends.stream().map(UserFriend::getId).collect(Collectors.toList());
-//        删除好友关系
-//        TODO:逻辑删除
-        userFriendDao.removeByIds(friendRecordIds);
+//        逻辑删除
+        this.removeByIds(friendRecordIds);
 //        禁用房间
         roomService.disableFriendRoom(Arrays.asList(uid, targetUid));
+    }
+
+    private void removeByIds(List<Long> friendRecordIds){
+        List<UserFriend> byIds = userFriendDao.getByIds(friendRecordIds);
+        List<UserFriend> collect = byIds.stream().map(friend -> {
+            friend.setDeleteStatus(1);
+            return friend;
+        }).collect(Collectors.toList());
+        userFriendDao.updateByIds(collect);
     }
 
     @Override

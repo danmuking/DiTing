@@ -1,12 +1,11 @@
 package com.linyi.user.dao;
 
+import com.linyi.common.domain.enums.NormalOrNoEnum;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.CursorUtils;
 import com.linyi.user.domain.entity.UserFriend;
-import com.linyi.user.domain.vo.request.friend.FriendCheckReq;
 import com.linyi.user.mapper.UserFriendMapper;
-import com.linyi.user.service.IUserFriendService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -43,13 +42,24 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
 
     public CursorPageBaseResp<UserFriend> getFriendPage(Long uid, CursorPageBaseReq cursorPageBaseReq) {
         return CursorUtils.getCursorPageByMysql(this, cursorPageBaseReq,
-                wrapper -> wrapper.eq(UserFriend::getUid, uid), UserFriend::getId);
+                wrapper -> wrapper.eq(UserFriend::getUid, uid).eq(UserFriend::getDeleteStatus, NormalOrNoEnum.NORMAL.getStatus()), UserFriend::getId);
     }
 
     public List<UserFriend> getByFriends(Long uid, List<Long> uidList) {
         return lambdaQuery()
                 .eq(UserFriend::getUid, uid)
+                .eq(UserFriend::getDeleteStatus,NormalOrNoEnum.NORMAL.getStatus())
                 .in(UserFriend::getFriendUid, uidList)
                 .list();
+    }
+
+    public List<UserFriend> getByIds(List<Long> friendRecordIds) {
+        return lambdaQuery()
+                .in(UserFriend::getId, friendRecordIds)
+                .list();
+    }
+
+    public void updateByIds(List<UserFriend> collect) {
+        updateBatchById(collect);
     }
 }

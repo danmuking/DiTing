@@ -51,7 +51,7 @@ public class DaoTest {
     }
     @Test
     public void generateToken(){
-        String login = loginService.login(11022L);
+        String login = loginService.login(11023L);
         System.out.println(login);
     }
 
