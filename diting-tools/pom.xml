@@ -15,6 +15,7 @@
         <module>diting-common-starter</module>
         <module>diting-transaction</module>
         <module>j2cache-native-spring-boot-starter</module>
+        <module>diting-oss-starter</module>
     </modules>
 
 

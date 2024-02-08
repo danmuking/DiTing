@@ -11,6 +11,7 @@ import com.linyi.common.domain.vo.request.PageBaseReq;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.domain.vo.response.PageBaseResp;
 import com.linyi.common.event.UserApplyEvent;
+import com.linyi.common.exception.BusinessException;
 import com.linyi.common.utils.AssertUtil;
 import com.linyi.user.dao.UserApplyDao;
 import com.linyi.user.dao.UserDao;
@@ -207,6 +208,16 @@ public class FriendServiceImpl implements FriendService {
 
     @Transactional(rollbackFor = Exception.class)
     public void createFriend(Long uid, Long targetUid) {
+//        TODO:bug
+//        检查是否存在删除的好友
+        List<UserFriend> userFriend = userFriendDao.getUserFriend(uid, targetUid);
+        if(userFriend.size()<=2){
+            userFriendDao.removeByIds(userFriend.stream().map(UserFriend::getId).collect(Collectors.toList()));
+        }
+        else {
+            log.error("uid:{}, targetUid:{} 好友关系不正确", uid, targetUid);
+            throw new BusinessException("好友关系不正确");
+        }
         UserFriend userFriend1 = new UserFriend();
         userFriend1.setUid(uid);
         userFriend1.setFriendUid(targetUid);
