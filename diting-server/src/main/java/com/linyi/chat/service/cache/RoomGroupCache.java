@@ -28,6 +28,6 @@ public class RoomGroupCache extends AbstractJ2Cache<Long, RoomGroup> {
 
     @Override
     protected Map<Long, RoomGroup> load(List<Long> req) {
-        return roomGroupDao.getBatchByRoomIds(req).stream().collect(Collectors.toMap(RoomGroup::getId, roomGroup -> roomGroup));
+        return roomGroupDao.getBatchByRoomIds(req).stream().collect(Collectors.toMap(RoomGroup::getRoomId, roomGroup -> roomGroup));
     }
 }

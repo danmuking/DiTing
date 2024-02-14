@@ -22,6 +22,8 @@ import com.linyi.chat.service.ChatService;
 import com.linyi.chat.service.RoomAppService;
 import com.linyi.chat.service.adapter.MemberAdapter;
 import com.linyi.chat.service.adapter.RoomAdapter;
+import com.linyi.chat.service.cache.RoomCache;
+import com.linyi.chat.service.cache.RoomGroupCache;
 import com.linyi.chat.service.strategy.msg.AbstractMsgHandler;
 import com.linyi.chat.service.strategy.msg.MsgHandlerFactory;
 import com.linyi.common.domain.enums.RoomTypeEnum;
@@ -43,6 +45,7 @@ import com.linyi.user.domain.vo.response.ws.WSBaseResp;
 import com.linyi.user.service.IRoleService;
 import com.linyi.user.service.RoomService;
 import com.linyi.user.service.adapter.ChatAdapter;
+import com.linyi.user.service.cache.UserCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -82,6 +85,12 @@ public class RoomAppServiceImpl implements RoomAppService {
     private IRoleService iRoleService;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    private RoomCache roomCache;
+    @Autowired
+    private RoomGroupCache roomGroupCache;
+    @Autowired
+    private UserCache userCache;
     @Override
     public CursorPageBaseResp<ChatRoomResp> getContactPage(CursorPageBaseReq request, Long uid) {
         CursorPageBaseResp<Long> page;
@@ -123,7 +132,7 @@ public class RoomAppServiceImpl implements RoomAppService {
      */
     @Override
     public ChatRoomResp getContactDetail(Long uid, long roomId) {
-        Room room = roomDao.getById(roomId);
+        Room room = roomCache.get(roomId);
         AssertUtil.isNotEmpty(room, "房间号有误");
         return buildContactResp(uid, Collections.singletonList(roomId)).get(0);
     }
@@ -137,14 +146,18 @@ public class RoomAppServiceImpl implements RoomAppService {
 
     @Override
     public MemberResp getGroupDetail(Long uid, long roomId) {
-        RoomGroup roomGroup = roomGroupDao.getByRoomId(roomId);
-        Room room = roomDao.getById(roomId);
+        RoomGroup roomGroup = roomGroupCache.get(roomId);
+        Room room = roomCache.get(roomId);
         AssertUtil.isNotEmpty(roomGroup, "roomId有误");
-//        TODO:热点群缓存
 //        拉取在线人数
         Long onlineNum;
-        List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
-        onlineNum = userDao.getOnlineCount(memberUidList).longValue();
+        if (isHotGroup(room)) {// 热点群从redis取人数
+            onlineNum = userCache.getOnlineNum();
+        }
+        else {
+            List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
+            onlineNum = userDao.getOnlineCount(memberUidList).longValue();
+        }
 //        拉取用户角色
         GroupRoleAPPEnum groupRole = getGroupRole(uid, roomGroup, room);
         return MemberResp.builder()
@@ -158,14 +171,14 @@ public class RoomAppServiceImpl implements RoomAppService {
 
     @Override
     public CursorPageBaseResp<ChatMemberResp> getMemberPage(MemberReq request) {
-        Room room = roomDao.getById(request.getRoomId());
+        Room room = roomCache.get(request.getRoomId());
         AssertUtil.isNotEmpty(room, "房间号有误");
         List<Long> memberUidList;
         if (isHotGroup(room)) {// 全员群展示所有用户
             memberUidList = null;
         }
         else {// 只展示房间内的群成员
-            RoomGroup roomGroup = roomGroupDao.getByRoomId(request.getRoomId());
+            RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
             memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
         }
         return chatService.getMemberPage(memberUidList, request);
