@@ -61,7 +61,27 @@ public class RedisKey {
      */
     public static final String OPEN_ID_STRING = "openid:%s";
 
-
+    /**
+     * @param null:
+     * @return null
+     * @description 单聊房间
+     * @date 2024/2/14 15:26
+     */
+    public static final String ROOM_FRIENDS = "roomFriends:roomId_%d";
+    /**
+     * @param null:
+     * @return null
+     * @description 群聊房间
+     * @date 2024/2/14 15:32
+     */
+    public static final String ROOM_GROUP = "roomGroup:roomId_%d";
+    /**
+     * @param null:
+     * @return null
+     * @description 消息
+     * @date 2024/2/14 15:47
+     */
+    public static final String MESSAGE = "message:messageId_%d";
     /**
      * 用户上次使用GLM使用时间
      */

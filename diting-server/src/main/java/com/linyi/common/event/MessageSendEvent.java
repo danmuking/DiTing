@@ -1,5 +1,6 @@
 package com.linyi.common.event;
 
+import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 import java.time.Clock;
@@ -10,6 +11,7 @@ import java.time.Clock;
  * @author: lin
  * @create: 2024-01-25 20:05
  **/
+@Getter
 public class MessageSendEvent extends ApplicationEvent {
     private Long msgId;
     public MessageSendEvent(Object source, Long msgId) {

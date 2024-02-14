@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -43,9 +42,10 @@ public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
                 .one();
     }
 
-    public List<RoomFriend> getBatchByIds(List<Long> roomIds) {
+    public List<RoomFriend> getBatchByRoomIds(List<Long> roomIds) {
         return lambdaQuery()
                 .in(RoomFriend::getRoomId, roomIds)
                 .list();
     }
+
 }

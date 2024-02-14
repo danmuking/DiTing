@@ -13,6 +13,7 @@ import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -84,5 +85,9 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact>{
             return this.remove(wrapper);
         }
         return false;
+    }
+
+    public void refreshOrCreateActiveTime(Long roomId, List<Long> memberUidList, Long msgId, Date activeTime) {
+        baseMapper.refreshOrCreateActiveTime(roomId, memberUidList, msgId, activeTime);
     }
 }

@@ -44,7 +44,6 @@ import com.linyi.user.service.IRoleService;
 import com.linyi.user.service.RoomService;
 import com.linyi.user.service.adapter.ChatAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -366,7 +365,7 @@ public class RoomAppServiceImpl implements RoomAppService {
         Map<Long, RoomGroup> roomInfoBatch = null;
         if(Objects.nonNull(groupRoomIdMap.get(RoomTypeEnum.GROUP.getType()))){
             List<Long> groupRoomId = groupRoomIdMap.get(RoomTypeEnum.GROUP.getType());
-            List<RoomGroup> batchById = roomGroupDao.getBatchById(groupRoomId);
+            List<RoomGroup> batchById = roomGroupDao.getBatchByRoomIds(groupRoomId);
             roomInfoBatch = Optional.ofNullable(batchById).orElse(new ArrayList<>()).stream().collect(Collectors.toMap(RoomGroup::getId, Function.identity()));
         }
 //         获取单聊信息
@@ -406,7 +405,7 @@ public class RoomAppServiceImpl implements RoomAppService {
             return new HashMap<>();
         }
 //        查询单聊房间信息
-        List<RoomFriend> batchByIds = roomFriendDao.getBatchByIds(roomIds);
+        List<RoomFriend> batchByIds = roomFriendDao.getBatchByRoomIds(roomIds);
         Map<Long, RoomFriend> roomFriendMap = Optional.ofNullable(batchByIds).orElse(new ArrayList<>()).stream().collect(Collectors.toMap(RoomFriend::getRoomId, Function.identity()));
 //        获取好友uid
         Set<Long> friendUidSet = ChatAdapter.getFriendUidSet(roomFriendMap.values(), uid);

@@ -1,6 +1,7 @@
 package com.linyi.chat.service;
 
 import com.linyi.chat.domain.dto.MsgReadInfoDTO;
+import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
@@ -84,4 +85,13 @@ public interface ChatService {
     void msgRead(Long uid, ChatMessageMemberReq request);
 
     CursorPageBaseResp<ChatMemberResp> getMemberPage(List<Long> memberUidList, MemberReq request);
+
+    /**
+     * @param message:
+     * @param uid:
+     * @return void
+     * @description 根据消息获得消息前端展示的物料
+     * @date 2024/2/14 15:52
+     */
+    ChatMessageResp getMsgResp(Message message, Long uid);
 }

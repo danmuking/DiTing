@@ -26,7 +26,7 @@ public class RoomGroupDao extends ServiceImpl<RoomGroupMapper, RoomGroup> {
                 .one();
     }
 
-    public List<RoomGroup> getBatchById(List<Long> groupRoomId) {
+    public List<RoomGroup> getBatchByRoomIds(List<Long> groupRoomId) {
         return lambdaQuery()
                 .in(RoomGroup::getRoomId, groupRoomId)
                 .list();

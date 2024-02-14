@@ -1,12 +1,16 @@
 package com.linyi.user.service.adapter;
 
+import com.linyi.chat.domain.dto.ChatMsgRecallDTO;
+import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.user.domain.entity.User;
+import com.linyi.user.domain.enums.WSMsgRecall;
 import com.linyi.user.domain.enums.WSRespTypeEnum;
 import com.linyi.user.domain.vo.response.ws.WSBaseResp;
 import com.linyi.user.domain.vo.response.ws.WSFriendApply;
 import com.linyi.user.domain.vo.response.ws.WSLoginSuccess;
 import com.linyi.user.domain.vo.response.ws.WSLoginUrl;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
+import org.springframework.beans.BeanUtils;
 
 /**
  * @description websocket消息适配器
@@ -48,6 +52,22 @@ public class WSAdapter {
         WSBaseResp<WSFriendApply> wsBaseResp = new WSBaseResp<>();
         wsBaseResp.setType(WSRespTypeEnum.APPLY.getType());
         wsBaseResp.setData(resp);
+        return wsBaseResp;
+    }
+
+    public static WSBaseResp<?> buildMsgSend(ChatMessageResp msgResp) {
+        WSBaseResp<ChatMessageResp> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.MESSAGE.getType());
+        wsBaseResp.setData(msgResp);
+        return wsBaseResp;
+    }
+
+    public static WSBaseResp<?> buildMsgRecall(ChatMsgRecallDTO recallDTO) {
+        WSBaseResp<WSMsgRecall> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.RECALL.getType());
+        WSMsgRecall recall = new WSMsgRecall();
+        BeanUtils.copyProperties(recallDTO, recall);
+        wsBaseResp.setData(recall);
         return wsBaseResp;
     }
 }

@@ -8,7 +8,6 @@ import com.linyi.chat.domain.enums.MessageStatusEnum;
 import com.linyi.chat.domain.vo.request.ChatMessagePageReq;
 import com.linyi.chat.mapper.MessageMapper;
 import com.linyi.chat.domain.entity.Message;
-import com.linyi.chat.service.IMessageService;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
@@ -75,5 +74,11 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                 .eq(Message::getFromUid, uid)
                 .set(Message::getStatus, MessageStatusEnum.DELETE.getStatus());
         this.update(wrapper);
+    }
+
+    public List<Message> getByIds(List<Long> req) {
+        return lambdaQuery()
+                .in(Message::getId, req)
+                .list();
     }
 }

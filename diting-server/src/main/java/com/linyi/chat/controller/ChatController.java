@@ -9,6 +9,8 @@ import com.linyi.chat.service.ChatService;
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.utils.RequestHolder;
+import com.linyi.user.domain.enums.BlackTypeEnum;
+import com.linyi.user.service.cache.UserCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>
@@ -33,14 +37,32 @@ import java.util.Collection;
 public class ChatController {
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private UserCache userCache;
+
+    /**
+     * @param :
+     * @return Set<String>
+     * @description 获取黑名单
+     * @date 2024/2/8 23:01
+     */
+    private Set<String> getBlackUidSet() {
+        return userCache.getBlackMap().getOrDefault(BlackTypeEnum.UID.getType(), new HashSet<>());
+    }
 
     @GetMapping("/public/msg/page")
     @ApiOperation("消息列表")
 //    @FrequencyControl(time = 120, count = 20, target = FrequencyControl.Target.IP)
     public ApiResult<CursorPageBaseResp<ChatMessageResp>> getMsgPage(@Valid ChatMessagePageReq request) {
         CursorPageBaseResp<ChatMessageResp> msgPage = chatService.getMsgPage(request, RequestHolder.get().getUid());
-//        filterBlackMsg(msgPage);
+//        过滤黑名单用户
+        filterBlackMsg(msgPage);
         return ApiResult.success(msgPage);
+    }
+
+    private void filterBlackMsg(CursorPageBaseResp<ChatMessageResp> msgPage) {
+        Set<String> blackMembers = getBlackUidSet();
+        msgPage.getList().removeIf(a -> blackMembers.contains(a.getFromUser().getUid().toString()));
     }
 
     @PostMapping("/msg")

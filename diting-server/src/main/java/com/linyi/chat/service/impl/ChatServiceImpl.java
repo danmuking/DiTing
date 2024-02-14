@@ -20,6 +20,10 @@ import com.linyi.chat.service.ContactService;
 import com.linyi.chat.service.adapter.MemberAdapter;
 import com.linyi.chat.service.adapter.MessageAdapter;
 import com.linyi.chat.service.adapter.RoomAdapter;
+import com.linyi.chat.service.cache.GroupMemberCache;
+import com.linyi.chat.service.cache.RoomCache;
+import com.linyi.chat.service.cache.RoomFriendCache;
+import com.linyi.chat.service.cache.RoomGroupCache;
 import com.linyi.chat.service.helper.ChatMemberHelper;
 import com.linyi.chat.service.strategy.mark.AbstractMsgMarkStrategy;
 import com.linyi.chat.service.strategy.mark.MsgMarkFactory;
@@ -40,8 +44,6 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.enums.ChatActiveStatusEnum;
 import com.linyi.user.domain.enums.RoleEnum;
 import com.linyi.user.service.IRoleService;
-import net.sf.jsqlparser.expression.operators.arithmetic.Concat;
-import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -81,6 +83,15 @@ public class ChatServiceImpl implements ChatService {
     private ContactService contactService;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private RoomCache roomCache;
+    @Autowired
+    private RoomFriendCache roomFriendCache;
+    @Autowired
+    private RoomGroupCache roomGroupCache;
+    @Autowired
+    private GroupMemberCache groupMemberCache;
+
     @Override
     public CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq request, Long uid) {
 //        获取该用户能见的最后一条消息id，防止用户被踢出后能看见之后的消息
@@ -238,7 +249,7 @@ public class ChatServiceImpl implements ChatService {
         AssertUtil.isTrue(between < 2, "覆水难收，超过2分钟的消息不能撤回哦~~");
     }
 
-    private ChatMessageResp getMsgResp(Message msg, Long uid) {
+    public ChatMessageResp getMsgResp(Message msg, Long uid) {
         return CollUtil.getFirst(getMsgRespBatch(Collections.singletonList(msg), uid));
     }
 
@@ -250,7 +261,7 @@ public class ChatServiceImpl implements ChatService {
      * @date 2024/1/25 19:52
      */
     private void check(ChatMessageReq request, Long uid) {
-        Room room = roomDao.getById(request.getRoomId());
+        Room room = roomCache.get(request.getRoomId());
 //        热点房间所有人可用
         if (room.isHotRoom()) {
             return;
@@ -258,7 +269,7 @@ public class ChatServiceImpl implements ChatService {
 //        单聊
         if (room.isRoomFriend()) {
 //            找到对应房间
-            RoomFriend roomFriend = roomFriendDao.getByRoomId(request.getRoomId());
+            RoomFriend roomFriend = roomFriendCache.get(request.getRoomId());
 //            判断房间状态
             AssertUtil.equal(NormalOrNoEnum.NORMAL.getStatus(), roomFriend.getStatus(), "您已经被对方拉黑");
 //            判断双方好友关系
@@ -267,8 +278,8 @@ public class ChatServiceImpl implements ChatService {
 //        群聊
         if (room.isRoomGroup()) {
 //            判断用户是否在群中
-            RoomGroup roomGroup = roomGroupDao.getByRoomId(request.getRoomId());
-            GroupMember member = groupMemberDao.getMember(roomGroup.getId(), uid);
+            RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
+            GroupMember member = groupMemberCache.getMember(roomGroup.getId(), uid);
             AssertUtil.isNotEmpty(member, "您已经被移除该群");
         }
 

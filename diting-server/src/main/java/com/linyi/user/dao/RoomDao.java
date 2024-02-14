@@ -8,6 +8,7 @@ import com.linyi.user.mapper.RoomMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -39,5 +40,21 @@ public class RoomDao extends ServiceImpl<RoomMapper, Room> {
         return lambdaQuery()
                 .in(Room::getId, roomIds)
                 .list();
+    }
+
+    /**
+     * @param roomId:
+     * @param msgId:
+     * @param msgTime:
+     * @return void
+     * @description 刷新房间活跃信息
+     * @date 2024/2/14 15:56
+     */
+    public void refreshActiveTime(Long roomId, Long msgId, Date msgTime) {
+        lambdaUpdate()
+                .eq(Room::getId, roomId)
+                .set(Room::getLastMsgId, msgId)
+                .set(Room::getActiveTime, msgTime)
+                .update();
     }
 }
