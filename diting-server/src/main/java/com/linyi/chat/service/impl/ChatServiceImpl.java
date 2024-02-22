@@ -47,6 +47,7 @@ import com.linyi.user.service.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -105,6 +106,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional
     public Long sendMsg(ChatMessageReq request, Long uid) {
 //        检查是否能发送消息
         check(request, uid);

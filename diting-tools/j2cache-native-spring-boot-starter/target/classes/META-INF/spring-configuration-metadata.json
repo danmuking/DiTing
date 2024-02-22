@@ -106,7 +106,8 @@
       "name": "j2cache.l2.redis.namespace",
       "type": "java.lang.String",
       "description": "Key命名空间（前缀）",
-      "sourceType": "com.luo.j2cache.sb.autoconfigure.J2CacheConfigProps$RedisConfig"
+      "sourceType": "com.luo.j2cache.sb.autoconfigure.J2CacheConfigProps$RedisConfig",
+      "defaultValue": ""
     },
     {
       "name": "j2cache.l2.redis.storage",

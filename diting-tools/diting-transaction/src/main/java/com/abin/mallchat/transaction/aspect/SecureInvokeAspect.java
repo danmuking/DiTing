@@ -37,6 +37,13 @@ public class SecureInvokeAspect {
     @Autowired
     private SecureInvokeService secureInvokeService;
 
+    /**
+     * @param joinPoint:
+     * @param secureInvoke:
+     * @return Object
+     * @description 将方法签名记录到数据库，以便后续重试
+     * @date 2024/2/22 22:08
+     */
     @Around("@annotation(secureInvoke)")
     public Object around(ProceedingJoinPoint joinPoint, SecureInvoke secureInvoke) throws Throwable {
         boolean async = secureInvoke.async();
@@ -45,6 +52,7 @@ public class SecureInvokeAspect {
         if (SecureInvokeHolder.isInvoking() || !inTransaction) {
             return joinPoint.proceed();
         }
+//        事务状态，记录到数据库，不做执行，由定时任务执行
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         List<String> parameters = Stream.of(method.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
         SecureInvokeDTO dto = SecureInvokeDTO.builder()

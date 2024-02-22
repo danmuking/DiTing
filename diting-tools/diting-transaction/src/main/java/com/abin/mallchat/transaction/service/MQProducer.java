@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
+import java.util.Random;
+
 /**
  * Description: 发送mq工具类
  * Author: <a href="https://github.com/zongzibinbin">abin</a>
