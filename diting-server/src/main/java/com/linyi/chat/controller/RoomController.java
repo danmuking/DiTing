@@ -9,7 +9,7 @@ import com.linyi.chat.service.GroupMemberService;
 import com.linyi.chat.service.RoomAppService;
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
-import com.linyi.common.utils.RequestHolder;
+import com.linyi.util.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import jdk.nashorn.internal.objects.annotations.Property;

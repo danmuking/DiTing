@@ -1,6 +1,7 @@
 package com.linyi.chat.controller;
 
 
+import com.linyi.annotation.FrequencyControl;
 import com.linyi.chat.domain.dto.MsgReadInfoDTO;
 import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
@@ -8,7 +9,7 @@ import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.ChatService;
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
-import com.linyi.common.utils.RequestHolder;
+import com.linyi.util.RequestHolder;
 import com.linyi.user.domain.enums.BlackTypeEnum;
 import com.linyi.user.service.cache.UserCache;
 import io.swagger.annotations.Api;
@@ -69,7 +70,7 @@ public class ChatController {
     @ApiOperation("发送消息")
 //    @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)
 //    @FrequencyControl(time = 30, count = 5, target = FrequencyControl.Target.UID)
-//    @FrequencyControl(time = 60, count = 10, target = FrequencyControl.Target.UID)
+    @FrequencyControl(time = 60, count = 1, target = FrequencyControl.Target.UID)
     public ApiResult<ChatMessageResp> sendMsg(@Valid @RequestBody ChatMessageReq request) {
         Long msgId = chatService.sendMsg(request, RequestHolder.get().getUid());
         //返回完整消息格式，方便前端展示

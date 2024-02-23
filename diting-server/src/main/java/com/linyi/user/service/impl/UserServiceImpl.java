@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.linyi.common.event.UserBlackEvent;
 import com.linyi.common.event.UserRegisterEvent;
 import com.linyi.common.utils.AssertUtil;
-import com.linyi.common.utils.RequestHolder;
+import com.linyi.util.RequestHolder;
 import com.linyi.user.dao.BlackDao;
 import com.linyi.user.dao.ItemConfigDao;
 import com.linyi.user.dao.UserBackpackDao;

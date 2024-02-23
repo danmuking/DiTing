@@ -2,7 +2,7 @@ package com.linyi.user.controller;
 
 import com.abin.mallchat.oss.domain.OssResp;
 import com.linyi.common.domain.vo.response.ApiResult;
-import com.linyi.common.utils.RequestHolder;
+import com.linyi.util.RequestHolder;
 import com.linyi.user.domain.vo.request.UploadUrlReq;
 import com.linyi.user.service.OssService;
 import io.swagger.annotations.Api;

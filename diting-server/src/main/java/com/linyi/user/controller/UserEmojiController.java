@@ -3,7 +3,7 @@ package com.linyi.user.controller;
 import com.linyi.chat.domain.vo.request.IdReqVO;
 import com.linyi.chat.domain.vo.response.IdRespVO;
 import com.linyi.common.domain.vo.response.ApiResult;
-import com.linyi.common.utils.RequestHolder;
+import com.linyi.util.RequestHolder;
 import com.linyi.user.domain.vo.request.user.UserEmojiReq;
 import com.linyi.user.domain.vo.response.UserEmojiResp;
 import com.linyi.user.service.UserEmojiService;

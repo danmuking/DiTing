@@ -2,7 +2,7 @@ package com.linyi.user.controller;
 
 
 import com.linyi.common.domain.vo.response.ApiResult;
-import com.linyi.common.utils.RequestHolder;
+import com.linyi.util.RequestHolder;
 import com.linyi.user.domain.dto.ItemInfoDTO;
 import com.linyi.user.domain.dto.SummeryInfoDTO;
 import com.linyi.user.domain.vo.request.friend.ItemInfoReq;

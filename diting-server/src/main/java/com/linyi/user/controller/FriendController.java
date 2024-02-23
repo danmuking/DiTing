@@ -5,7 +5,7 @@ import com.linyi.common.domain.vo.request.PageBaseReq;
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
 import com.linyi.common.domain.vo.response.PageBaseResp;
-import com.linyi.common.utils.RequestHolder;
+import com.linyi.util.RequestHolder;
 import com.linyi.user.domain.vo.request.friend.FriendApplyReq;
 import com.linyi.user.domain.vo.request.friend.FriendCheckReq;
 import com.linyi.user.domain.vo.request.friend.FriendCheckResp;

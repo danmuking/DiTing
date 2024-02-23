@@ -8,7 +8,7 @@ import com.linyi.chat.service.RoomAppService;
 import com.linyi.common.domain.vo.request.CursorPageBaseReq;
 import com.linyi.common.domain.vo.response.ApiResult;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
-import com.linyi.common.utils.RequestHolder;
+import com.linyi.util.RequestHolder;
 import com.linyi.user.dao.RoomDao;
 import com.linyi.user.service.RoomService;
 import io.swagger.annotations.Api;
