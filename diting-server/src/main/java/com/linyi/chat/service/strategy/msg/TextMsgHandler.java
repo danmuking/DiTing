@@ -9,11 +9,14 @@ import com.linyi.chat.domain.vo.request.msg.TextMsgReq;
 import com.linyi.chat.domain.vo.response.msg.TextMsgResp;
 import com.linyi.chat.service.adapter.MessageAdapter;
 import com.linyi.common.domain.enums.YesOrNoEnum;
+import com.linyi.common.utils.discover.PrioritizedUrlDiscover;
+import com.linyi.common.utils.discover.domain.UrlInfo;
 import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,6 +32,14 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
     MessageDao messageDao;
     @Autowired
     UserDao userDao;
+
+    /**
+     * @param null:
+     * @return null
+     * @description Url连接解析器
+     * @date 2024/2/29 23:38
+     */
+    private static final PrioritizedUrlDiscover URL_TITLE_DISCOVER = new PrioritizedUrlDiscover();
     /**
      * @param :
      * @return MessageTypeEnum
@@ -61,6 +72,9 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
             update.setGapCount(gapCount);
             update.setReplyMsgId(body.getReplyMsgId());
         }
+        //判断消息url跳转
+        Map<String, UrlInfo> urlContentMap = URL_TITLE_DISCOVER.getUrlContentMap(body.getContent());
+        extra.setUrlContentMap(urlContentMap);
 //        入库
         messageDao.updateById(update);
     }
@@ -75,7 +89,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
     public Object showMsg(Message msg) {
         TextMsgResp resp = new TextMsgResp();
         resp.setContent(msg.getContent());
-//        resp.setUrlContentMap(Optional.ofNullable(msg.getExtra()).map(MessageExtra::getUrlContentMap).orElse(null));
+        resp.setUrlContentMap(Optional.ofNullable(msg.getExtra()).map(MessageExtra::getUrlContentMap).orElse(null));
 //        resp.setAtUidList(Optional.ofNullable(msg.getExtra()).map(MessageExtra::getAtUidList).orElse(null));
 //        如果存在要回复的消息
         Optional<Message> reply = Optional.ofNullable(msg.getReplyMsgId())

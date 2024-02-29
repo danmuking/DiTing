@@ -2,6 +2,7 @@ package com.linyi.chat.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.linyi.common.utils.discover.domain.UrlInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,8 +27,8 @@ import java.util.Map;
 public class MessageExtra implements Serializable {
     private static final long serialVersionUID = 1L;
 //    TODO:
-//    //url跳转链接
-//    private Map<String, UrlInfo> urlContentMap;
+    //url跳转链接
+    private Map<String, UrlInfo> urlContentMap;
     //消息撤回详情
     private MsgRecall recall;
 //    //艾特的uid

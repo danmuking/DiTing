@@ -37,6 +37,7 @@ public class FrequencyControlAspect {
         FrequencyControl[] annotationsByType = method.getAnnotationsByType(FrequencyControl.class);
         Map<String, FrequencyControl> keyMap = new HashMap<>();
         String strategy = FrequencyControlConstant.TOTAL_COUNT_WITH_IN_FIX_TIME;
+//        构造map
         for (int i = 0; i < annotationsByType.length; i++) {
             // 获取频控注解
             FrequencyControl frequencyControl = annotationsByType[i];
