@@ -3,6 +3,7 @@ package com.linyi;
 import com.linyi.user.dao.UserDao;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.service.LoginService;
+import lombok.extern.slf4j.Slf4j;
 import net.oschina.j2cache.CacheChannel;
 import net.oschina.j2cache.J2Cache;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -27,6 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @EnableAsync
+@Slf4j
 public class DaoTest {
     @Autowired
     private UserDao userDao;
@@ -71,5 +73,17 @@ public class DaoTest {
     public void sendMQ() {
         Message<String> build = MessageBuilder.withPayload("123").build();
         rocketMQTemplate.send("test-topic", build);
+    }
+    @Test
+    public void threadTest(){
+        Thread thread = new Thread(() -> {
+            log.info("111");
+            throw new RuntimeException("运行时异常了");
+        });
+        Thread.UncaughtExceptionHandler uncaughtExceptionHandler =(t,e)->{
+            log.error("Exception in thread ",e);
+        };
+        thread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
+        thread.start();
     }
 }
