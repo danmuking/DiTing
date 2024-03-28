@@ -76,7 +76,7 @@ public class FriendServiceImpl implements FriendService {
     private ChatService chatService;
 
     @Override
-    @RedissonLock(key = "#uid")
+//    @RedissonLock(key = "#uid")
     public void apply(Long uid, FriendApplyReq request) {
 //        判断是否已经是好友
         UserFriend friend = userFriendDao.getByFriend(uid, request.getTargetUid());

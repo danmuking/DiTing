@@ -26,7 +26,7 @@ import java.util.Objects;
 
 /**
  * @program: DiTing
- * @description: 消息消费者
+ * @description: 发送消息更新房间收信箱，并同步给房间成员信箱
  * @author: lin
  * @create: 2024-02-14 15:43
  **/

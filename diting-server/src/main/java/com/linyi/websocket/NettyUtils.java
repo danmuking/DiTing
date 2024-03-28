@@ -9,6 +9,7 @@ import io.netty.util.AttributeKey;
  * @date 2024/1/8 19:58
  */
 public class NettyUtils {
+    public static AttributeKey<Long> UID = AttributeKey.valueOf("uid");
     public static AttributeKey<String> TOKEN = AttributeKey.valueOf("token");
     public static AttributeKey<String> IP = AttributeKey.valueOf("ip");
     /**

@@ -38,7 +38,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info(String.format("%s 通道关闭", ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString()));
-        webSocketService.userOffline(ctx.channel());
+        webSocketService.userOffline(ctx);
     }
 
     /**
@@ -55,7 +55,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
             if (idleStateEvent.state() == IdleState.READER_IDLE) {
                 log.info(String.format("%s 通道读空闲,关闭通道", ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString()));
-                webSocketService.userOffline(ctx.channel());
+                webSocketService.userOffline(ctx);
             }
         }
 //        处理握手完毕事件
@@ -88,8 +88,6 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         log.info(String.format("%s 通道连接", ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString()));
         this.webSocketService = getService();
-//        建立通道后，将通道加入到通道管理器中
-        this.webSocketService.connect(ctx.channel());
     }
 
     private WebSocketService getService() {

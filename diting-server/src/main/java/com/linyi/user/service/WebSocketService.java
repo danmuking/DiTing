@@ -2,7 +2,9 @@ package com.linyi.user.service;
 
 
 import com.linyi.user.domain.vo.request.user.WSAuthorize;
+import com.linyi.user.domain.vo.response.ws.WSBaseResp;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import me.chanjar.weixin.common.error.WxErrorException;
 
 /**
@@ -34,7 +36,7 @@ public interface WebSocketService {
      * @description 用户下线
      * @date 2024/1/11 19:16
      */
-    void userOffline(Channel channel);
+    void userOffline(ChannelHandlerContext channel);
 
     /**
      * @param code:
@@ -61,4 +63,10 @@ public interface WebSocketService {
      * @date 2024/1/14 22:45
      */
     void authorize(Channel channel, WSAuthorize wsAuthorize);
+
+    void sendToUid(WSBaseResp<?> wsBaseMsg, Long uid);
+
+    void sendToAllOnline(WSBaseResp<?> wsBaseMsg, Long skipUid);
+
+    Boolean scanSuccess(Integer code);
 }

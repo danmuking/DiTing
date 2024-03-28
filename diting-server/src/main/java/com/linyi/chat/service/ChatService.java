@@ -4,6 +4,7 @@ import com.linyi.chat.domain.dto.MsgReadInfoDTO;
 import com.linyi.chat.domain.entity.Message;
 import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
+import com.linyi.chat.domain.vo.response.ChatMemberStatisticResp;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.common.domain.vo.response.CursorPageBaseResp;
@@ -94,4 +95,6 @@ public interface ChatService {
      * @date 2024/2/14 15:52
      */
     ChatMessageResp getMsgResp(Message message, Long uid);
+
+    ChatMemberStatisticResp getMemberStatistic();
 }

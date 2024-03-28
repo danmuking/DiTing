@@ -26,6 +26,15 @@ import java.util.stream.Collectors;
  * @create: 2024-01-23 20:08
  **/
 public class CursorUtils {
+    /**
+     * @param mapper: 查询数据库的mapper
+     * @param request: 页面大小、游标位置等信息
+     * @param initWrapper: 查询条件
+     * @param cursorColumn: 游标列
+     * @return CursorPageBaseResp<T> @See CursorPageBaseResp
+     * @description 在MySQL中进行游标查询
+     * @date 2024/3/14 10:46
+     */
     public static <T> CursorPageBaseResp<T> getCursorPageByMysql(IService<T> mapper, CursorPageBaseReq request, Consumer<LambdaQueryWrapper<T>> initWrapper, SFunction<T, ?> cursorColumn){
 //        游标字段类型
         Class<?> cursorType = LambdaUtils.getReturnType(cursorColumn);
@@ -67,6 +76,14 @@ public class CursorUtils {
         }
     }
 
+    /**
+     * @param cursorPageBaseReq:
+     * @param redisKey:
+     * @param typeConvert:
+     * @return CursorPageBaseResp<Pair<T,Double>>
+     * @description TODO
+     * @date 2024/3/14 10:53
+     */
     public static <T> CursorPageBaseResp<Pair<T, Double>> getCursorPageByRedis(CursorPageBaseReq cursorPageBaseReq, String redisKey, Function<String, T> typeConvert) {
         Set<ZSetOperations.TypedTuple<String>> typedTuples;
         if (StrUtil.isBlank(cursorPageBaseReq.getCursor())) {//第一次

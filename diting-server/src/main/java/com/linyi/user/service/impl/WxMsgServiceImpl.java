@@ -1,8 +1,12 @@
 package com.linyi.user.service.impl;
 
+import com.abin.mallchat.transaction.service.MQProducer;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.linyi.common.constant.MQConstant;
 import com.linyi.user.dao.UserDao;
+import com.linyi.user.domain.dto.LoginMessageDTO;
+import com.linyi.user.domain.dto.ScanSuccessMessageDTO;
 import com.linyi.user.domain.entity.User;
 import com.linyi.user.service.UserService;
 import com.linyi.user.service.WebSocketService;
@@ -35,6 +39,8 @@ public class WxMsgServiceImpl implements WxMsgService {
     WebSocketService webSocketService;
     @Autowired
     UserDao userDao;
+    @Autowired
+    private MQProducer mqProducer;
 
     @Override
     public WxMpXmlOutMessage scan(WxMpService wxMpService, WxMpXmlMessage wxMpXmlMessage) {
@@ -60,8 +66,8 @@ public class WxMsgServiceImpl implements WxMsgService {
 //        绑定事件码和openid
         USER_OPENID_MAP.put(openId,code);
 //        请求用户授权
-//        发送请求授权信息
-        webSocketService.sendAuthorizeMsg(code);
+        //授权流程,给用户发送授权消息，并且异步通知前端扫码成功,等待授权
+        mqProducer.sendMsg(MQConstant.SCAN_MSG_TOPIC, new ScanSuccessMessageDTO(code));
         String authorizeUrl = String.format(URL,wxMpService.getWxMpConfigStorage().getAppId(),callback + "/wx/portal/public/callBack");
         return new TextBuilder().build("请点击链接授权：<a href=\"" + authorizeUrl + "\">登录</a>", wxMpXmlMessage);
     }
@@ -76,8 +82,8 @@ public class WxMsgServiceImpl implements WxMsgService {
         Integer code = USER_OPENID_MAP.getIfPresent(openid);
 //        删除缓存
         USER_OPENID_MAP.invalidate(openid);
-//        授权完成，向前端发送通知
-        webSocketService.scanLoginSuccess(code, user.getId());
+//        授权完成，发送登录成功事件
+        mqProducer.sendMsg(MQConstant.LOGIN_MSG_TOPIC, new LoginMessageDTO(user.getId(), code));
     }
 
     /**

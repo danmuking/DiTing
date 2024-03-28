@@ -13,6 +13,7 @@ import com.linyi.chat.domain.enums.MessageReadTypeEnum;
 import com.linyi.chat.domain.enums.MessageTypeEnum;
 import com.linyi.chat.domain.vo.request.*;
 import com.linyi.chat.domain.vo.response.ChatMemberResp;
+import com.linyi.chat.domain.vo.response.ChatMemberStatisticResp;
 import com.linyi.chat.domain.vo.response.ChatMessageReadResp;
 import com.linyi.chat.domain.vo.response.ChatMessageResp;
 import com.linyi.chat.service.ChatService;
@@ -44,6 +45,7 @@ import com.linyi.user.domain.entity.User;
 import com.linyi.user.domain.enums.ChatActiveStatusEnum;
 import com.linyi.user.domain.enums.RoleEnum;
 import com.linyi.user.service.IRoleService;
+import com.linyi.user.service.cache.UserCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -92,6 +94,8 @@ public class ChatServiceImpl implements ChatService {
     private RoomGroupCache roomGroupCache;
     @Autowired
     private GroupMemberCache groupMemberCache;
+    @Autowired
+    private UserCache userCache;
 
     @Override
     public CursorPageBaseResp<ChatMessageResp> getMsgPage(ChatMessagePageReq request, Long uid) {
@@ -253,6 +257,17 @@ public class ChatServiceImpl implements ChatService {
 
     public ChatMessageResp getMsgResp(Message msg, Long uid) {
         return CollUtil.getFirst(getMsgRespBatch(Collections.singletonList(msg), uid));
+    }
+
+    @Override
+    public ChatMemberStatisticResp getMemberStatistic() {
+//        System.out.println(Thread.currentThread().getName());
+        Long onlineNum = userCache.getOnlineNum();
+//        Long offlineNum = userCache.getOfflineNum();不展示总人数
+        ChatMemberStatisticResp resp = new ChatMemberStatisticResp();
+        resp.setOnlineNum(onlineNum);
+//        resp.setTotalNum(onlineNum + offlineNum);
+        return resp;
     }
 
     /**

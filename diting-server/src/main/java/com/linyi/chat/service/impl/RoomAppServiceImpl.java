@@ -51,6 +51,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.io.ObjectStreamClass;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -319,8 +320,8 @@ public class RoomAppServiceImpl implements RoomAppService {
         List<Message> messages = CollectionUtil.isEmpty(msgIds) ? new ArrayList<>() : messageDao.listByIds(msgIds);
         Map<Long, Message> msgMap = messages.stream().collect(Collectors.toMap(Message::getId, Function.identity()));
 //        获取会话的最后一条消息的发送者信息
-        List<User> users = userDao.getBatchByIds(messages.stream().map(Message::getFromUid).collect(Collectors.toList()));
-        Map<Long, User> lastMsgUidMap =users.stream().collect(Collectors.toMap(User::getId, Function.identity()));
+        List<User> users = userDao.getBatchByIds(messages.stream().map(message -> Objects.nonNull(message.getFromUid())?message.getFromUid():null).collect(Collectors.toList()));
+        Map<Long, User> lastMsgUidMap =users.stream().map(user -> Objects.nonNull(user)?user:new User()).collect(Collectors.toMap(User::getId, Function.identity()));
 //        获取会话未读数
         Map<Long, Integer> unReadCountMap = getUnReadCountMap(uid, roomIds);
         return roomBaseInfoMap.values().stream().map(room -> {
@@ -400,14 +401,14 @@ public class RoomAppServiceImpl implements RoomAppService {
 //            群聊设置群聊名称和头像
             if (RoomTypeEnum.of(room.getType()) == RoomTypeEnum.GROUP) {
                 RoomGroup roomGroup = finalRoomInfoBatch.get(room.getId());
-                roomBaseInfo.setName(roomGroup.getName());
-                roomBaseInfo.setAvatar(roomGroup.getAvatar());
+                roomBaseInfo.setName(Objects.nonNull(roomGroup)?roomGroup.getName():"");
+                roomBaseInfo.setAvatar(Objects.nonNull(roomGroup)?roomGroup.getAvatar():"");
             }
 //            单聊设置好友名称和头像
             else if (RoomTypeEnum.of(room.getType()) == RoomTypeEnum.FRIEND) {
                 User user = finalfriendRoomMap.get(room.getId());
-                roomBaseInfo.setName(user.getName());
-                roomBaseInfo.setAvatar(user.getAvatar());
+                roomBaseInfo.setName(Objects.nonNull(user)?user.getName():"");
+                roomBaseInfo.setAvatar(Objects.nonNull(user)?user.getAvatar():"");
             }
             return roomBaseInfo;
         }).collect(Collectors.toMap(RoomBaseInfo::getRoomId, Function.identity()));
