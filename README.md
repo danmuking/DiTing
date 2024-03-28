@@ -11,9 +11,10 @@
 欢迎来到 DiTing！这是一个简单、轻量级的即时通讯（IM）开源项目，采用 Java 编写，严格遵守互联网开发标准。致力于为初学者提供一个友好、易于上手的 IM 解决方案，让你可以轻松入门并开始构建自己的即时通讯应用。
 
 ## 项目导航
-- 学习文档：[抹茶聊天首页]()
+- 学习文档：[DiTing文档]()
 - 项目交流群：🎉 欢迎加入 DiTing 交流群！这是一个与其他开发者交流、分享经验和获取项目相关支持的地方。在这里你可以不仅可以提出遇到的任何问题，同时欢迎你与其他开发者交流并且对DiTing提出任何建议！
-- 码云仓库：Gitee
+- 码云仓库：[Gitee](https://gitee.com/danmuking/DiTing)
+- Github仓库：[Github](https://github.com/danmuking/DiTing)
 
 ### 技术选型
 | 技术      | 说明 | 官网 |
@@ -29,18 +30,25 @@
 | Swagger-UI	      | API文档生成工具      |https://github.com/swagger-api/swagger-ui|
 | minio	      | 自建对象存储      |https://github.com/minio/minio|
 
+### Star 趋势
+[<img alt="Star History Chart" src="https://api.star-history.com/svg?repos=danmuking/DiTing&amp;type=Date"/>]
+
 ### 贡献者
 
 请阅读**CONTRIBUTING.md** 查阅为该项目做出贡献的开发者。
 
 
 ### 作者
+DanMu
+如果你需要帮助，可以尝试添加我的微信，我会尽力帮助你。
 
-xxx@xxxx
+<img alt="微信图片_20240328224833.jpg" src="./assets/微信图片_20240328230919.jpg" height="300"/>
 
-知乎:xxxx  &ensp; qq:xxxxxx
+### 捐赠
+如果你觉得这个项目对你有帮助，你可以请作者喝一杯咖啡。
 
-*您也可以在贡献者名单中参看所有参与该项目的开发者。*
+<img alt="微信图片_20240328224833.jpg" src="./assets/微信图片_20240328224833.jpg" height="300"/>
+<img alt="微信图片_20240328224851.jpg" src="./assets/微信图片_20240328224851.jpg" height="300"/>
 
 ### 版权说明
 
@@ -49,9 +57,14 @@ xxx@xxxx
 ### 鸣谢
 
 
-- [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-- [Img Shields](https://shields.io)
-- [Choose an Open Source License](https://choosealicense.com)
-- [GitHub Pages](https://pages.github.com)
-- [Animate.css](https://daneden.github.io/animate.css)
-- [xxxxxxxxxxxxxx](https://connoratherton.com/loaders)
+[//]: # (- [GitHub Emoji Cheat Sheet]&#40;https://www.webpagefx.com/tools/emoji-cheat-sheet&#41;)
+
+[//]: # (- [Img Shields]&#40;https://shields.io&#41;)
+
+[//]: # (- [Choose an Open Source License]&#40;https://choosealicense.com&#41;)
+
+[//]: # (- [GitHub Pages]&#40;https://pages.github.com&#41;)
+
+[//]: # (- [Animate.css]&#40;https://daneden.github.io/animate.css&#41;)
+
+[//]: # (- [xxxxxxxxxxxxxx]&#40;https://connoratherton.com/loaders&#41;)
