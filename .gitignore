@@ -2,3 +2,4 @@
 !/diting-server/target/
 *.class
 */target/
+*.properties
